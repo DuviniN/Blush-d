@@ -96,7 +96,17 @@
 .product-info .stock {
     font-size: 1rem;
     margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.stock.in-stock {
     color: #28a745;
+    /* green */
+}
+
+.stock.out-of-stock {
+    color: #dc3545;
+    /* red */
 }
 
 .quantity {
