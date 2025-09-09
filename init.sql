@@ -18,7 +18,8 @@ CREATE TABLE User (
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL, -- In a real application, this should be a hashed password.
   address VARCHAR(255),
-  phone_number VARCHAR(20)
+  phone_number VARCHAR(20),
+  role VARCHAR(50) DEFAULT 'CUSTOMER'  -- Added role field to distinguish user types (e.g., admin, customer)
 );
 
 -- -----------------------------------------------------
@@ -131,12 +132,13 @@ INSERT INTO Category (name) VALUES
 ('Bodycare');
 
 -- Insert mock data for User
-INSERT INTO User (first_name, last_name, email, password, address, phone_number) VALUES
-('Alice', 'Johnson', 'alice@example.com', 'hashed_pw1', '123 Main St, New York', '1234567890'),
-('Bob', 'Smith', 'bob@example.com', 'hashed_pw2', '456 Park Ave, Los Angeles', '2345678901'),
-('Charlie', 'Brown', 'charlie@example.com', 'hashed_pw3', '789 Elm St, Chicago', '3456789012'),
-('Diana', 'Williams', 'diana@example.com', 'hashed_pw4', '101 Maple Rd, Houston', '4567890123'),
-('Ethan', 'Taylor', 'ethan@example.com', 'hashed_pw5', '202 Pine St, Miami', '5678901234');
+-- Insert mock data for User with role
+INSERT INTO User (first_name, last_name, email, password, address, phone_number, role) VALUES
+('Alice', 'Johnson', 'alice@example.com', 'hashed_pw1', '123 Main St, New York', '1234567890', 'CUSTOMER'),
+('Bob', 'Smith', 'bob@example.com', 'hashed_pw2', '456 Park Ave, Los Angeles', '2345678901', 'CUSTOMER'),
+('Charlie', 'Brown', 'charlie@example.com', 'hashed_pw3', '789 Elm St, Chicago', '3456789012', 'ADMIN'),
+('Diana', 'Williams', 'diana@example.com', 'hashed_pw4', '101 Maple Rd, Houston', '4567890123', 'MANAGER'),
+('Ethan', 'Taylor', 'ethan@example.com', 'hashed_pw5', '202 Pine St, Miami', '5678901234', 'CUSTOMER');
 
 -- Insert mock data for Product
 INSERT INTO Product (name, description, price, stock, category_id) VALUES

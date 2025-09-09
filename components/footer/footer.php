@@ -21,16 +21,9 @@
             </div>
         </div>
 
-        <div class="footer-section quick-links">
-            <h3>Quick Links</h3>
-            <ul>
-                <li><a href="../Pages/skin/skin.php">Skin Care</a></li>
-                <li><a href="../Pages/hair/hair.php">Hair Care</a></li>
-                <li><a href="../Pages/makeup/makeup.php">Makeup</a></li>
-                <li><a href="../Pages/tools/tools.php">Beauty Tools</a></li>
-                <li><a href="about.php">About Us</a></li>
-                <li><a href="contact.php">Contact</a></li>
-            </ul>
+        <div class="footer-section read-only-info">
+            <h3>Information</h3>
+            <p>Welcome to Blush-D! For general information, please contact your manager or support. This section is for reading only.</p>
         </div>
 
         <div class="footer-section customer-service">

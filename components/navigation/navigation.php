@@ -2,10 +2,10 @@
 // navigation.php - reusable navigation bar
 ?>
 <nav>
-    <div class="nav-right">
+    <div class="nav-left">
         <h1>BLUSH-D</h1>
     </div>
-      
+            
     <div class="nav-center">
         <a href="index.php">
         <img src="./assets/pictures/download.png" alt="Logo" class="logo">

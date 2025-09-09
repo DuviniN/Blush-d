@@ -1,27 +1,53 @@
 <?php
-// index.php - Home Page
+// index.php - Modern Home Page
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home | My Website</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLUSH-D | Premium Beauty & Cosmetics</title>
     <link rel="stylesheet" href="./assets/global.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="./components/navigation/navigation.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="./components/footer/footer.css?v=<?php echo time(); ?>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="./assets/global.js" defer></script>
+    <style>
+        .animated-fadein {
+            opacity: 0;
+            animation: fadeInUp 1s forwards 4s;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .pro-features {
+            background: var(--soft-white);
+        }
+    </style>
 </head>
 <body>
     <header>
-        <?php include './components/navigation/navigation.php'; ?>   <!-- Loads the nav bar -->
+        <?php include './components/navigation/navigation.php'; ?>
     </header>
-    <!-- Professional Landing Hero Section with Animated Slider -->
+
+    <!-- Modern Hero Section with Premium Slider -->
     <section class="landing-hero">
         <div class="hero-slider">
-            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80" class="hero-slide active" alt="Cosmetic Beauty 1">
-            <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80" class="hero-slide" alt="Cosmetic Beauty 2">
-            <img src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1200&q=80" class="hero-slide" alt="Cosmetic Beauty 3">
-            <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1200&q=80" class="hero-slide" alt="Cosmetic Beauty 4">
+            <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=1920&q=80" class="hero-slide active" alt="Premium Cosmetics Collection">
+            <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1920&q=80" class="hero-slide" alt="Luxury Beauty Products">
+            <img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&w=1920&q=80" class="hero-slide" alt="Modern Beauty Studio">
+            <img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1920&q=80" class="hero-slide" alt="Professional Makeup">
             <div class="hero-overlay"></div>
             <div class="slider-controls">
                 <span class="slider-dot active"></span>
@@ -31,133 +57,208 @@
             </div>
         </div>
         <div class="hero-caption animated-fadein">
-            <h1><span class="highlight">Unleash</span> Your True Beauty</h1>
-            <p>Premium cosmetics, skincare, and beauty tools for every style.<br>Shop the latest trends and glow with confidence!</p>
-            <a href="../Pages/register/register.php" class="cta-btn">Get Started</a>
-            <a href="#brands" class="cta-btn cta-secondary">See Brands</a>
+            <h1><span class="highlight">Discover</span> Your Perfect Look</h1>
+            <p>Elevate your beauty routine with our curated collection of premium cosmetics, skincare essentials, and professional beauty tools. Where luxury meets everyday elegance.</p>
+            <a href="../Pages/register/register.php" class="cta-btn">Start Your Journey</a>
+            <a href="#brands" class="cta-btn cta-secondary">Explore Brands</a>
         </div>
     </section>
-    <!-- Trusted By Section -->
+
+    <!-- Modern Trusted By Section -->
     <section class="trusted-by">
-        <h2>Trusted By Leading Cosmetic Brands</h2>
-        <div class="brand-logos">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/L%27Or%C3%A9al_logo.svg" alt="L'Oreal">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Maybelline_logo.svg" alt="Maybelline">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2d/Sephora_logo.svg" alt="Sephora">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Estee_Lauder_Companies_logo.svg" alt="Estee Lauder">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Revlon_logo.svg" alt="Revlon">
+        <h2 class="trusted-title">Partnered with Industry Leaders</h2>
+        <div class="brand-logos-modern">
+            <div class="brand-logo-card">
+                <img src="./assets/pictures/L'Oreal/images (1).jpeg" alt="L'Oreal Paris">
+                <span class="brand-name">L'Oreal</span>
+            </div>
+            <div class="brand-logo-card">
+                <img src="./assets/pictures/Maybelline/images.jpeg" alt="Maybelline New York">
+                <span class="brand-name">Maybelline</span>
+            </div>
+            <div class="brand-logo-card">
+                <img src="./assets/pictures/Sephora/download.jpeg" alt="Sephora Beauty">
+                <span class="brand-name">Sephora</span>
+            </div>
+            <div class="brand-logo-card">
+                <img src="./assets/pictures/Estee_Lauder/images.jpeg" alt="Estée Lauder">
+                <span class="brand-name">Estée Lauder</span>
+            </div>
+            <div class="brand-logo-card">
+                <img src="./assets/pictures/Revlon/images.jpeg" alt="Revlon Professional">
+                <span class="brand-name">Revlon</span>
+            </div>
         </div>
     </section>
-    <!-- Why Choose Us Section -->
+
+    <!-- Why Choose Us - Modern Approach -->
     <section class="why-choose-us">
-        <h2>Why Choose Our Cosmetic Store?</h2>
+        <h2>Why Beauty Enthusiasts Choose Us</h2>
         <ul>
-            <li><strong>100% Authentic Products:</strong> We guarantee genuine, high-quality cosmetics from top brands worldwide.</li>
-            <li><strong>Expert Advice:</strong> Our beauty consultants help you find the perfect products for your skin, hair, and style.</li>
-            <li><strong>Exclusive Offers:</strong> Enjoy members-only discounts, gifts, and early access to new launches.</li>
-            <li><strong>Eco-Friendly Packaging:</strong> We care for the planet with sustainable, recyclable packaging.</li>
-            <li><strong>Fast, Secure Delivery:</strong> Get your beauty essentials delivered quickly and safely to your door.</li>
+            <li><strong>Authenticity Guaranteed:</strong> Every product is sourced directly from authorized distributors, ensuring 100% genuine cosmetics and skincare.</li>
+            <li><strong>Expert Beauty Consultations:</strong> Our certified beauty advisors provide personalized recommendations based on your skin type, tone, and style preferences.</li>
+            <li><strong>Exclusive Member Benefits:</strong> Access to limited-edition collections, early product launches, and member-only discounts up to 30% off.</li>
+            <li><strong>Sustainable Beauty:</strong> We prioritize eco-conscious brands and sustainable packaging to minimize environmental impact.</li>
+            <li><strong>Premium Service:</strong> Same-day shipping in metro areas, complimentary gift wrapping, and hassle-free 30-day returns.</li>
         </ul>
     </section>
-    <!-- Features Section -->
-    <section class="features-section pro-features">
-        <div class="feature-card">
-            <div class="feature-icon" style="background:linear-gradient(135deg,#ff7eb3,#ff758c);color:#fff;">💄</div>
-            <h3>Top Cosmetics</h3>
-            <p>Shop the best makeup brands and trending products for every look. Curated by beauty experts.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon" style="background:linear-gradient(135deg,#a8edea,#fed6e3);color:#ff7eb3;">🧴</div>
-            <h3>Skincare Essentials</h3>
-            <p>Glow with dermatologist-recommended skincare for all skin types. Clean, safe, and effective.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon" style="background:linear-gradient(135deg,#fcb69f,#ffecd2);color:#ff758c;">💇‍♀️</div>
-            <h3>Hair Perfection</h3>
-            <p>Find nourishing haircare and styling tools for salon results at home. Shine every day.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon" style="background:linear-gradient(135deg,#43e97b,#38f9d7);color:#fff;">🚚</div>
-            <h3>Fast Delivery</h3>
-            <p>Enjoy quick, reliable shipping and easy returns on every order. 24/7 support.</p>
+
+    <!-- Modern Features Section -->
+    <section class="pro-features">
+        <div class="features-section">
+            <div class="feature-card">
+                <div class="feature-icon">💄</div>
+                <h3>Makeup Mastery</h3>
+                <p>Professional-grade cosmetics from cult favorites to luxury brands. Create stunning looks with our expertly curated makeup collection.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌟</div>
+                <h3>Skincare Science</h3>
+                <p>Advanced skincare solutions backed by dermatological research. Transform your skin with clinically proven ingredients and formulations.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">✨</div>
+                <h3>Beauty Tools</h3>
+                <p>Professional brushes, applicators, and beauty devices. Achieve flawless application with tools used by makeup artists worldwide.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Express Delivery</h3>
+                <p>Lightning-fast shipping with real-time tracking. Premium packaging ensures your beauty products arrive in perfect condition.</p>
+            </div>
         </div>
     </section>
-    <!-- Popular Brands Carousel -->
+
+    <!-- Modern Popular Brands Carousel -->
     <section class="popular-brands" id="brands">
-        <h2>Popular Brands</h2>
+        <h2>Featured Beauty Brands</h2>
         <div class="brands-carousel">
-            <div class="brand-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/L%27Or%C3%A9al_logo.svg/320px-L%27Or%C3%A9al_logo.svg.png" alt="L'Oreal"></div>
-            <div class="brand-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Maybelline_logo.svg/320px-Maybelline_logo.svg.png" alt="Maybelline"></div>
-            <div class="brand-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Sephora_logo.svg/320px-Sephora_logo.svg.png" alt="Sephora"></div>
-            <div class="brand-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Estee_Lauder_Companies_logo.svg/320px-Estee_Lauder_Companies_logo.svg.png" alt="Estee Lauder"></div>
-            <div class="brand-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Revlon_logo.svg/320px-Revlon_logo.svg.png" alt="Revlon"></div>
-            <div class="brand-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Clinique_logo.svg/320px-Clinique_logo.svg.png" alt="Clinique"></div>
-            <div class="brand-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Maybelline_logo.svg/320px-Maybelline_logo.svg.png" alt="Maybelline"></div>
+            <div class="brand-item"><img src="./assets/pictures/L'Oreal/images (1).jpeg" alt="L'Oreal Paris"></div>
+            <div class="brand-item"><img src="./assets/pictures/Maybelline/images.jpeg" alt="Maybelline New York"></div>
+            <div class="brand-item"><img src="./assets/pictures/Sephora/download.jpeg" alt="Sephora Collection"></div>
+            <div class="brand-item"><img src="./assets/pictures/Estee_Lauder/images.jpeg" alt="Estée Lauder"></div>
+            <div class="brand-item"><img src="./assets/pictures/Revlon/images.jpeg" alt="Revlon Professional"></div>
+            <div class="brand-item"><img src="./assets/pictures/Clinique/download.jpeg" alt="Clinique"></div>
+            <div class="brand-item"><img src="./assets/pictures/L'Oreal/images (1).jpeg" alt="L'Oreal Paris"></div>
+            <div class="brand-item"><img src="./assets/pictures/Maybelline/images.jpeg" alt="Maybelline New York"></div>
         </div>
     </section>
-    <!-- Testimonials Section -->
+
+    <!-- Modern Testimonials -->
     <section class="testimonials">
-        <h2>What Our Customers Say</h2>
+        <h2>What Beauty Lovers Are Saying</h2>
         <div class="testimonial-list">
             <div class="testimonial">
-                <p>“Absolutely love the variety and quality! My skin has never looked better.”</p>
-                <span>- Ayesha, Lahore</span>
+                <p>"The quality and authenticity of products here is unmatched. My skincare routine has completely transformed, and I've never felt more confident in my skin."</p>
+                <span>— Ayesha K., Lahore</span>
             </div>
             <div class="testimonial">
-                <p>“Fast delivery and genuine products. Highly recommended for beauty lovers!”</p>
-                <span>- Sara, Karachi</span>
+                <p>"From ordering to delivery, everything was seamless. The expert recommendations helped me find my perfect foundation shade on the first try!"</p>
+                <span>— Sara M., Karachi</span>
             </div>
             <div class="testimonial">
-                <p>“The expert advice helped me pick the perfect foundation. Thank you!”</p>
-                <span>- Fatima, Islamabad</span>
+                <p>"Finally, a beauty store that understands what modern women need. Premium products, sustainable packaging, and incredible customer service."</p>
+                <span>— Fatima R., Islamabad</span>
             </div>
         </div>
     </section>
-    <!-- Newsletter Signup -->
+
+    <!-- Modern Newsletter Signup -->
     <section class="newsletter-signup">
-        <h2>Stay Updated!</h2>
+        <h2>Stay In The Beauty Loop</h2>
+        <p>Get exclusive access to new launches, beauty tips, and special offers delivered to your inbox.</p>
         <form class="newsletter-form">
-            <input type="email" placeholder="Enter your email for beauty tips & offers" required>
-            <button type="submit" class="cta-btn">Subscribe</button>
+            <input type="email" placeholder="Enter your email for beauty updates" required>
+            <button type="submit">Subscribe Now</button>
         </form>
     </section>
-    <main>
-        <h1 style="display:none">Welcome to My Website</h1>
-        <p style="display:none">This is the homepage of your project.</p>
+
+    <!-- Hidden Main Content for SEO -->
+    <main style="display:none;">
+        <h1>BLUSH-D - Premium Beauty & Cosmetics Store</h1>
+        <p>Discover the finest selection of cosmetics, skincare, and beauty tools from world-renowned brands.</p>
     </main>
+
     <script>
-    // Professional JS slider for hero images with controls and animated caption
+    // Enhanced Professional Slider with Smooth Transitions
     let currentSlide = 0;
     const slides = document.querySelectorAll('.hero-slide');
     const dots = document.querySelectorAll('.slider-dot');
     const caption = document.querySelector('.hero-caption');
-    function showSlide(idx) {
-      slides.forEach((el, i) => {
-        el.classList.toggle('active', i === idx);
-      });
-      dots.forEach((el, i) => {
-        el.classList.toggle('active', i === idx);
-      });
-      caption.classList.remove('animated-fadein');
-      void caption.offsetWidth;
-      caption.classList.add('animated-fadein');
-    }
-    function nextSlide() {
-      currentSlide = (currentSlide + 1) % slides.length;
-      showSlide(currentSlide);
-    }
-    dots.forEach((dot, i) => {
-      dot.addEventListener('click', () => {
-        currentSlide = i;
-        showSlide(currentSlide);
-      });
-    });
-    setInterval(nextSlide, 4000);
-    </script>
-   
-   <?php include './components/footer/footer.php'; ?>
-  
-
     
+    function showSlide(idx) {
+        slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === idx);
+        });
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === idx);
+        });
+        
+        // Animate caption
+        caption.style.transform = 'translateY(-50%) scale(0.95)';
+        caption.style.opacity = '0.8';
+        
+        setTimeout(() => {
+            caption.style.transform = 'translateY(-50%) scale(1)';
+            caption.style.opacity = '1';
+        }, 300);
+    }
+    
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+    }
+    
+    // Dot navigation
+    dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+            currentSlide = i;
+            showSlide(currentSlide);
+        });
+    });
+    
+    // Auto-advance slider
+    setInterval(nextSlide, 5000);
+    
+    // Newsletter form submission
+    document.querySelector('.newsletter-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = this.querySelector('input[type="email"]').value;
+        const button = this.querySelector('button');
+        const originalText = button.textContent;
+        
+        button.textContent = 'Subscribing...';
+        button.disabled = true;
+        
+        // Simulate API call
+        setTimeout(() => {
+            button.textContent = 'Subscribed!';
+            button.style.background = 'linear-gradient(135deg, #00c851, #00a84c)';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.disabled = false;
+                button.style.background = '';
+                this.reset();
+            }, 2000);
+        }, 1000);
+    });
+    
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+    </script>
+
+    <?php include './components/footer/footer.php'; ?>
 </body>
 </html>
