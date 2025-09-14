@@ -6,6 +6,9 @@
     <title>Manager Dashboard - Beauty Hub</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <!-- Main Dashboard Styles -->
     <link rel="stylesheet" href="Dashboard.css?v=<?php echo time(); ?>">
     
@@ -15,7 +18,8 @@
     <link rel="stylesheet" href="../../../components/manager/reports/reports-section.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="../../../components/manager/profile/profile-section.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="../../../components/manager/modals/modals.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="../../../components/manager/footer/footer.css?v=<?php echo time(); ?>">>
+    <link rel="stylesheet" href="../../../components/manager/footer/footer.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../../../assets/hide-scrollbar.css">
 </head>
 <body>
     <div class="container">
@@ -52,29 +56,28 @@
     <script src="../../../components/manager/reports/reports-section.js?v=<?php echo time(); ?>"></script>
     <script src="../../../components/manager/profile/profile-section.js?v=<?php echo time(); ?>"></script>
     <script src="../../../components/manager/modals/modals.js?v=<?php echo time(); ?>"></script>
+    <script src="../../../components/manager/modals/password-manager.js?v=<?php echo time(); ?>"></script>
     <script src="../../../components/manager/footer/footer.js?v=<?php echo time(); ?>"></script>
-    <script src="PasswordManager.js?v=<?php echo time(); ?>"></script>
     
     <!-- Initialize Components -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize all component managers
-            const sidebarManager = new SidebarManager();
-            const dashboardManager = new DashboardManager();
-            const reportsManager = new ReportsManager();
+            // Initialize only the components that don't auto-initialize
             const profileManager = new ProfileManager();
             const modalManager = new ModalManager();
-            const footerManager = new ManagerFooter();
             
-            // Make them available globally if needed
-            window.Components = {
-                sidebar: sidebarManager,
-                dashboard: dashboardManager,
-                reports: reportsManager,
-                profile: profileManager,
-                modals: modalManager,
-                footer: footerManager
-            };
+            // Wait a bit for other components to auto-initialize, then make them globally available
+            setTimeout(() => {
+                window.Components = {
+                    sidebar: window.sidebarManager,
+                    dashboard: window.dashboardManager, 
+                    reports: window.reportsManager,
+                    profile: profileManager,
+                    modals: modalManager,
+                    footer: window.managerFooter
+                };
+                console.log('All components initialized:', window.Components);
+            }, 100);
         });
     </script>
 </body>

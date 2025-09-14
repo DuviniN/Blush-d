@@ -45,7 +45,7 @@ class ManagerFooter {
 
 // Initialize footer when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.querySelector('.manager-footer')) {
+    if (document.querySelector('.manager-footer') && !window.managerFooter) {
         window.managerFooter = new ManagerFooter();
     }
 });

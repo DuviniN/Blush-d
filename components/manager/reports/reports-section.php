@@ -10,12 +10,6 @@
                 </h2>
                 <p class="reports-subtitle">Manage and monitor your product inventory</p>
             </div>
-            <div class="reports-actions">
-                <button class="btn-export" onclick="exportReport()">
-                    <i class="fas fa-download"></i>
-                    Export Report
-                </button>
-            </div>
         </div>
 
         <!-- Filter Section -->

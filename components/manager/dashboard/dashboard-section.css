@@ -474,11 +474,136 @@
     font-weight: 600;
 }
 
+/* Charts Section Styles */
+.charts-section {
+    margin: 35px 0;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.chart-card {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 4px 18px rgba(236, 72, 153, 0.08);
+    transition: all 0.3s ease;
+}
+
+.chart-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(236, 72, 153, 0.12);
+}
+
+.chart-card.full-width {
+    grid-column: 1 / -1;
+}
+
+.chart-header {
+    margin-bottom: 25px;
+}
+
+.chart-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 8px 0;
+}
+
+.chart-subtitle {
+    color: #64748b;
+    font-size: 0.95rem;
+    margin: 0;
+    font-weight: 500;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+.chart-container canvas {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.stock-overview-section {
+    margin: 35px 0;
+}
+
+.stock-overview-section .chart-container {
+    height: 400px;
+}
+
+/* Chart Loading Animation */
+.chart-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    color: #64748b;
+    font-size: 1.1rem;
+}
+
+.chart-loading::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ec4899;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Chart Error State */
+.chart-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    color: #ef4444;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.chart-error i {
+    margin-right: 8px;
+    font-size: 1.2rem;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .dashboard-grid {
         grid-template-columns: 1fr;
         gap: 20px;
+    }
+    
+    .charts-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .chart-card {
+        padding: 20px;
+    }
+    
+    .chart-container {
+        height: 250px;
+    }
+    
+    .stock-overview-section .chart-container {
+        height: 300px;
     }
     
     .header {
@@ -513,5 +638,10 @@
 @media (max-width: 1024px) and (min-width: 769px) {
     .popular-products-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .charts-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
     }
 }

@@ -16,8 +16,7 @@
                         <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
                     </div>
                     <div class="profile-info">
-                        <h1 class="profile-name-display">Duvini Weerasinghe</h1>
-                        <p class="profile-title-display">Store Manager</p>
+                        <h1 class="profile-name-display">Duvini Nimethra</h1>
                         <div class="profile-badges">
                             <span class="profile-badge verified">
                                 <i class="fas fa-check-circle"></i>
@@ -32,15 +31,11 @@
 
         <!-- Profile Navigation Tabs -->
         <div class="profile-tabs">
-            <button class="profile-tab active" data-tab="details" onclick="switchProfileTab('details')">
+            <button class="profile-tab active" data-tab="details">
                 <i class="fas fa-user-edit"></i>
                 Details
             </button>
-            <button class="profile-tab" data-tab="activity" onclick="switchProfileTab('activity')">
-                <i class="fas fa-history"></i>
-                Activity
-            </button>
-            <button class="profile-tab" data-tab="settings" onclick="switchProfileTab('settings')">
+            <button class="profile-tab" data-tab="settings">
                 <i class="fas fa-cog"></i>
                 Settings
             </button>
@@ -55,41 +50,53 @@
                     <div class="profile-modern-card">
                         <div class="profile-card-header">
                             <h3><i class="fas fa-user"></i> Personal Information</h3>
-                            <button class="profile-btn-secondary" onclick="enableEdit('personal')">
+                            <a href="#" class="edit-link" data-edit-section="personal">
                                 <i class="fas fa-edit"></i> Edit
-                            </button>
+                            </a>
                         </div>
                         <div class="profile-form-grid">
                             <div class="profile-form-group">
                                 <label class="profile-form-label">
-                                    <i class="fas fa-user"></i> Full Name
+                                    <i class="fas fa-user"></i> First Name
                                 </label>
-                                <input type="text" id="fullName" class="profile-form-input" value="Duvini Weerasinghe" readonly>
+                                <input type="text" id="firstName" class="profile-form-input" placeholder="John" readonly>
+                            </div>
+                            <div class="profile-form-group">
+                                <label class="profile-form-label">
+                                    <i class="fas fa-user"></i> Last Name
+                                </label>
+                                <input type="text" id="lastName" class="profile-form-input" placeholder="Doe" readonly>
                             </div>
                             <div class="profile-form-group">
                                 <label class="profile-form-label">
                                     <i class="fas fa-envelope"></i> Email
                                 </label>
-                                <input type="email" id="email" class="profile-form-input" value="duvini@beautyHub.com" readonly>
+                                <input type="email" id="email" class="profile-form-input" placeholder="john.doe@example.com" readonly>
                             </div>
                             <div class="profile-form-group">
                                 <label class="profile-form-label">
                                     <i class="fas fa-phone"></i> Phone
                                 </label>
-                                <input type="tel" id="phone" class="profile-form-input" value="+1 (555) 123-4567" readonly>
+                                <input type="tel" id="phone" class="profile-form-input" placeholder="+1 (555) 123-4567" readonly>
+                            </div>
+                            <div class="profile-form-group">
+                                <label class="profile-form-label">
+                                    <i class="fas fa-map"></i> Address
+                                </label>
+                                <input type="text" id="address" class="profile-form-input" placeholder="123 Main St, City, State" readonly>
                             </div>
                             <div class="profile-form-group">
                                 <label class="profile-form-label">
                                     <i class="fas fa-calendar"></i> Birth Date
                                 </label>
-                                <input type="date" id="birthDate" class="profile-form-input" value="1995-03-15" readonly>
+                                <input type="date" id="birthDate" class="profile-form-input" placeholder="1990-01-01" readonly>
                             </div>
                         </div>
                         <div class="profile-actions" id="personalActions" style="display: none;">
-                            <button class="profile-btn profile-btn-primary" onclick="saveChanges('personal')">
+                            <button class="profile-btn profile-btn-primary" data-save-section="personal">
                                 <i class="fas fa-save"></i> Save Changes
                             </button>
-                            <button class="profile-btn profile-btn-secondary" onclick="cancelEdit('personal')">
+                            <button class="profile-btn profile-btn-secondary" data-cancel-section="personal">
                                 <i class="fas fa-times"></i> Cancel
                             </button>
                         </div>
@@ -99,9 +106,6 @@
                     <div class="profile-modern-card">
                         <div class="profile-card-header">
                             <h3><i class="fas fa-briefcase"></i> Work Information</h3>
-                            <button class="profile-btn-secondary" onclick="enableEdit('work')">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
                         </div>
                         <div class="profile-form-grid">
                             <div class="profile-form-group">
@@ -129,59 +133,6 @@
                                 <input type="date" id="startDate" class="profile-form-input" value="2023-01-15" readonly>
                             </div>
                         </div>
-                        <div class="profile-actions" id="workActions" style="display: none;">
-                            <button class="profile-btn profile-btn-primary" onclick="saveChanges('work')">
-                                <i class="fas fa-save"></i> Save Changes
-                            </button>
-                            <button class="profile-btn profile-btn-secondary" onclick="cancelEdit('work')">
-                                <i class="fas fa-times"></i> Cancel
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Activity Tab -->
-            <div id="activity-tab" class="profile-tab-content">
-                <div class="profile-modern-card">
-                    <div class="profile-card-header">
-                        <h3><i class="fas fa-history"></i> Activity History</h3>
-                        <div class="activity-filters">
-                            <select class="profile-form-input" style="width: auto;">
-                                <option>Last 30 days</option>
-                                <option>Last 7 days</option>
-                                <option>Today</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="profile-activity-timeline">
-                        <div class="profile-activity-item">
-                            <div class="profile-activity-icon success">
-                                <i class="fas fa-plus"></i>
-                            </div>
-                            <div class="profile-activity-content">
-                                <div class="profile-activity-text">Added new product "Vitamin C Serum"</div>
-                                <div class="profile-activity-time">2 hours ago</div>
-                            </div>
-                        </div>
-                        <div class="profile-activity-item">
-                            <div class="profile-activity-icon warning">
-                                <i class="fas fa-edit"></i>
-                            </div>
-                            <div class="profile-activity-content">
-                                <div class="profile-activity-text">Updated stock for "Moisturizing Cream"</div>
-                                <div class="profile-activity-time">5 hours ago</div>
-                            </div>
-                        </div>
-                        <div class="profile-activity-item">
-                            <div class="profile-activity-icon info">
-                                <i class="fas fa-download"></i>
-                            </div>
-                            <div class="profile-activity-content">
-                                <div class="profile-activity-text">Exported inventory report</div>
-                                <div class="profile-activity-time">1 day ago</div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -200,17 +151,17 @@
                                     <h4>Change Password</h4>
                                     <p>Update your account password for security</p>
                                 </div>
-                                <button class="profile-btn-secondary" onclick="showModal('changePasswordModal')">
+                                <a href="#" class="edit-link" onclick="showModal('changePasswordModal'); return false;">
                                     <i class="fas fa-key"></i> Change
-                                </button>
+                                </a>
                             </div>
                             <div class="profile-setting-item">
                                 <div class="profile-setting-info">
-                                    <h4>Two-Factor Authentication</h4>
+                                    <h4>Two-Factor Authentication <span class="feature-badge">Coming Soon</span></h4>
                                     <p>Add an extra layer of security to your account</p>
                                 </div>
-                                <label class="profile-toggle-switch">
-                                    <input type="checkbox">
+                                <label class="profile-toggle-switch disabled">
+                                    <input type="checkbox" disabled>
                                     <span class="profile-toggle-slider"></span>
                                 </label>
                             </div>
@@ -220,7 +171,7 @@
                     <!-- Notification Preferences -->
                     <div class="profile-modern-card">
                         <div class="profile-card-header">
-                            <h3><i class="fas fa-bell"></i> Notifications</h3>
+                            <h3><i class="fas fa-bell"></i> Notifications <span class="feature-badge">Coming Soon</span></h3>
                         </div>
                         <div class="settings-list">
                             <div class="profile-setting-item">
@@ -228,8 +179,8 @@
                                     <h4>Email Notifications</h4>
                                     <p>Receive updates via email</p>
                                 </div>
-                                <label class="profile-toggle-switch">
-                                    <input type="checkbox" checked>
+                                <label class="profile-toggle-switch disabled">
+                                    <input type="checkbox" disabled>
                                     <span class="profile-toggle-slider"></span>
                                 </label>
                             </div>
@@ -238,8 +189,8 @@
                                     <h4>Low Stock Alerts</h4>
                                     <p>Get notified when products are running low</p>
                                 </div>
-                                <label class="profile-toggle-switch">
-                                    <input type="checkbox" checked>
+                                <label class="profile-toggle-switch disabled">
+                                    <input type="checkbox" disabled>
                                     <span class="profile-toggle-slider"></span>
                                 </label>
                             </div>

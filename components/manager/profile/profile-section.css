@@ -424,6 +424,27 @@
     transform: translateY(-2px);
 }
 
+.edit-link{
+    font-size: 0.9rem;
+    color: #ec4899;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.3s ease;
+}
+
+.feature-badge{
+    background: #fbbf24;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
 /* Settings Section */
 .profile-settings-grid {
     display: grid;

@@ -29,7 +29,7 @@ CREATE TABLE User (
 -- -----------------------------------------------------
 CREATE TABLE Product (
   product_id INT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(255) NOT NULL, -- Added a name field, which is essential for a product.
+  product_name VARCHAR(255) NOT NULL, -- Added a name field, which is essential for a product.
   description TEXT,
   price DECIMAL(10, 2) NOT NULL,
   stock INT NOT NULL,

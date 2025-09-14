@@ -7,6 +7,7 @@ class SidebarManager {
     init() {
         this.setupNavigation();
         this.setupResponsiveHandling();
+        this.restoreActiveSection();
     }
 
     setupNavigation() {
@@ -31,11 +32,15 @@ class SidebarManager {
 
         // Get the section to show from onclick attribute or data attribute
         const onclickValue = clickedLink.getAttribute('onclick');
+        let activeSectionName = null;
+        
         if (onclickValue) {
             // Extract section name from onclick="showSection('sectionName')"
             const match = onclickValue.match(/showSection\('(.+?)'\)/);
             if (match) {
-                window.showSection(match[1]);
+                activeSectionName = match[1];
+                this.saveActiveSection(activeSectionName);
+                window.showSection(activeSectionName);
             }
             // Extract modal name from onclick="showModal('modalName')"
             const modalMatch = onclickValue.match(/showModal\('(.+?)'\)/);
@@ -79,12 +84,45 @@ class SidebarManager {
                 link.classList.add('active');
             }
         });
+        
+        // Save the active section
+        this.saveActiveSection(sectionName);
+    }
+
+    saveActiveSection(sectionName) {
+        // Save the current active section to localStorage
+        try {
+            localStorage.setItem('blush_active_section', sectionName);
+        } catch (error) {
+            console.warn('Could not save active section to localStorage:', error);
+        }
+    }
+
+    restoreActiveSection() {
+        // Restore the previously active section on page load
+        try {
+            const savedSection = localStorage.getItem('blush_active_section');
+            if (savedSection) {
+                // Use setTimeout to ensure the DOM is fully ready
+                setTimeout(() => {
+                    this.setActiveSection(savedSection);
+                    // If showSection function exists, call it to display the section
+                    if (typeof window.showSection === 'function') {
+                        window.showSection(savedSection);
+                    }
+                }, 100);
+            }
+        } catch (error) {
+            console.warn('Could not restore active section from localStorage:', error);
+        }
     }
 }
 
 // Initialize sidebar when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new SidebarManager();
+    if (!window.sidebarManager) {
+        window.sidebarManager = new SidebarManager();
+    }
 });
 
 // Export for use in other modules

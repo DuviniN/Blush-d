@@ -352,11 +352,11 @@
 .stock-cell {
     font-weight: 700;
     color: #374151;
-    text-align: center;
+    text-align: left;
 }
 
 .status-cell {
-    text-align: center;
+    text-align: left;
 }
 
 /* Status Badges */
@@ -399,6 +399,43 @@
     animation: urgent-pulse 2s infinite;
 }
 
+.status.critical {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 0 3px 12px rgba(239, 68, 68, 0.4);
+    animation: critical-pulse 1.5s infinite;
+}
+
+.status.critical-stock {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 0 3px 12px rgba(239, 68, 68, 0.4);
+    animation: critical-pulse 1.5s infinite;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.status.critical-stock::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    opacity: 0.1;
+    border-radius: inherit;
+}
+
 @keyframes urgent-pulse {
     0%, 100% { 
         box-shadow: 0 3px 12px rgba(245, 158, 11, 0.3);
@@ -406,6 +443,16 @@
     50% { 
         box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
         transform: scale(1.05);
+    }
+}
+
+@keyframes critical-pulse {
+    0%, 100% { 
+        box-shadow: 0 3px 12px rgba(239, 68, 68, 0.4);
+    }
+    50% { 
+        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.6);
+        transform: scale(1.08);
     }
 }
 
@@ -659,17 +706,17 @@
 
 .th-stock, .stock-cell {
     min-width: 80px;
-    text-align: center;
+    text-align: left;
 }
 
 .th-status, .status-cell {
     min-width: 120px;
-    text-align: center;
+    text-align: left;
 }
 
 .th-actions, .actions-cell {
     min-width: 120px;
-    text-align: center;
+    text-align: left;
 }
 
 /* Action Buttons */

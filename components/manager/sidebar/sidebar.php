@@ -21,19 +21,13 @@
         <li class="nav-item">
             <a href="#" class="nav-link" onclick="showSection('reports')">
                 <i class="fas fa-chart-bar"></i>
-                <span>Reports</span>
+                <span>Inventory</span>
             </a>
         </li>
         <li class="nav-item">
             <a href="#" class="nav-link" onclick="showModal('addProductModal')">
                 <i class="fas fa-plus-circle"></i>
                 <span>Add Product</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="nav-link" onclick="showModal('addStockModal')">
-                <i class="fas fa-boxes"></i>
-                <span>Add Stock</span>
             </a>
         </li>
         <li class="nav-item">

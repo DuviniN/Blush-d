@@ -1,4 +1,3 @@
-// Reports Section Component JavaScript
 class ReportsManager {
     constructor() {
         this.currentData = [];
@@ -16,28 +15,37 @@ class ReportsManager {
     }
 
     setupFilterHandlers() {
-        // Brand filter
-        const brandFilter = document.getElementById('brandFilter');
-        if (brandFilter) {
-            brandFilter.addEventListener('change', () => this.applyFilters());
-        }
-
-        // Category filter
-        const categoryFilter = document.getElementById('categoryFilter');
+        // Category filter only
+        const categoryFilter = document.getElementById('categorySelect');
         if (categoryFilter) {
             categoryFilter.addEventListener('change', () => this.applyFilters());
-        }
-
-        // Stock filter
-        const stockFilter = document.getElementById('stockFilter');
-        if (stockFilter) {
-            stockFilter.addEventListener('change', () => this.applyFilters());
         }
 
         // Reset filters button
         const resetBtn = document.querySelector('.reports-btn-outline');
         if (resetBtn) {
             resetBtn.addEventListener('click', () => this.resetFilters());
+        }
+    }
+
+    populateCategoryFilter() {
+        if (this.currentData && this.currentData.length > 0) {
+            const categorySelect = document.getElementById('categorySelect');
+            if (categorySelect) {
+                // Get unique categories from the data
+                const categories = [...new Set(this.currentData.map(item => item.category).filter(cat => cat))];
+                
+                // Clear existing options except "All Categories"
+                categorySelect.innerHTML = '<option value="all">All Categories</option>';
+                
+                // Add category options
+                categories.sort().forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    categorySelect.appendChild(option);
+                });
+            }
         }
     }
 
@@ -60,14 +68,14 @@ class ReportsManager {
         this.showLoadingState();
         
         try {
-            const response = await fetch('../../../server/ReportController.php?action=inventory');
+            const response = await fetch('../../../server/api.php?endpoint=products&action=products');
             const result = await response.json();
-            
             if (result.success && result.data) {
                 this.currentData = result.data;
                 this.filteredData = [...this.currentData];
                 this.renderInventoryTable();
                 this.updateTableStats();
+                this.populateCategoryFilter(); // Populate category dropdown after data is loaded
             } else {
                 this.showNoDataState();
             }
@@ -156,7 +164,7 @@ class ReportsManager {
                     <span class="status ${statusClass}">${this.getStatusText(row.stock)}</span>
                 </td>
                 <td class="actions-cell">
-                    <button class="add_stock_btn" onclick="showModal('addStockModal')" title="Add Stock">
+                    <button class="add_stock_btn" onclick="openAddStockModal('${row.product_id}', '${row.product_name}')" title="Add Stock">
                         <i class="fas fa-plus"></i>
                     </button>
                 </td>
@@ -178,32 +186,12 @@ class ReportsManager {
     }
 
     applyFilters() {
-        const brandFilter = document.getElementById('brandFilter');
-        const categoryFilter = document.getElementById('categoryFilter');
-        const stockFilter = document.getElementById('stockFilter');
-
+        const categoryFilter = document.getElementById('categorySelect');
         let filtered = [...this.currentData];
 
-        // Apply brand filter
-        if (brandFilter && brandFilter.value) {
-            filtered = filtered.filter(item => item.brand === brandFilter.value);
-        }
-
-        // Apply category filter
-        if (categoryFilter && categoryFilter.value) {
+        // Apply category filter only
+        if (categoryFilter && categoryFilter.value && categoryFilter.value !== 'all') {
             filtered = filtered.filter(item => item.category === categoryFilter.value);
-        }
-
-        // Apply stock filter
-        if (stockFilter && stockFilter.value) {
-            const stockValue = stockFilter.value;
-            if (stockValue === 'low') {
-                filtered = filtered.filter(item => item.stock <= 20);
-            } else if (stockValue === 'normal') {
-                filtered = filtered.filter(item => item.stock > 20 && item.stock < 50);
-            } else if (stockValue === 'high') {
-                filtered = filtered.filter(item => item.stock >= 50);
-            }
         }
 
         this.filteredData = filtered;
@@ -212,14 +200,11 @@ class ReportsManager {
     }
 
     resetFilters() {
-        // Reset all filter dropdowns
-        const filters = ['brandFilter', 'categoryFilter', 'stockFilter'];
-        filters.forEach(filterId => {
-            const filter = document.getElementById(filterId);
-            if (filter) {
-                filter.value = '';
-            }
-        });
+        // Reset category filter only
+        const categoryFilter = document.getElementById('categorySelect');
+        if (categoryFilter) {
+            categoryFilter.value = 'all';
+        }
 
         // Reset filtered data
         this.filteredData = [...this.currentData];
@@ -227,7 +212,7 @@ class ReportsManager {
         this.updateTableStats();
 
         // Show notification
-        this.showNotification('Filters reset successfully', 'info');
+        this.showNotification('Category filter reset successfully', 'info');
     }
 
     sortTable(columnIndex) {
@@ -309,7 +294,7 @@ class ReportsManager {
         setTimeout(() => {
             const reportData = {
                 timestamp: new Date().toISOString(),
-                manager: 'Duvini Weerasinghe',
+                manager: 'Duvini Nimethra',
                 reportType: 'Inventory Report',
                 totalProducts: this.filteredData.length,
                 lowStockItems: this.filteredData.filter(item => item.stock <= 20).length,
@@ -377,9 +362,25 @@ class ReportsManager {
     }
 }
 
+// Global function to open add stock modal with product info
+function openAddStockModal(productId, productName) {
+    // Set the product information in the modal
+    document.getElementById('selectedProductId').value = productId;
+    document.getElementById('displayProductName').textContent = productName;
+    
+    // Clear the quantity input
+    const quantityInput = document.querySelector('input[name="quantityToAdd"]');
+    if (quantityInput) {
+        quantityInput.value = '';
+    }
+    
+    // Show the modal
+    showModal('addStockModal');
+}
+
 // Initialize reports manager when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('reports-section')) {
+    if (document.getElementById('reports-section') && !window.reportsManager) {
         window.reportsManager = new ReportsManager();
     }
 });
@@ -388,3 +389,5 @@ document.addEventListener('DOMContentLoaded', () => {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = ReportsManager;
 }
+
+ 

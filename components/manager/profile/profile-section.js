@@ -4,6 +4,7 @@ class ProfileManager {
         this.activeTab = 'details';
         this.editingSection = null;
         this.originalData = {};
+        this.isSaving = false; // Flag to prevent double saves
         this.init();
     }
 
@@ -12,6 +13,7 @@ class ProfileManager {
         this.setupProfileImageHandler();
         this.setupFormHandlers();
         this.setupToggleSwitches();
+        this.loadManagerProfile(); // Load profile data on init
     }
 
     setupTabNavigation() {
@@ -107,7 +109,112 @@ class ProfileManager {
 
     loadSettingsData() {
         // Load current settings state
-        console.log('Loading settings data...');
+    }
+
+    async loadManagerProfile() {
+        try {
+            const response = await fetch('../../../server/api.php?endpoint=profile&action=manager_profile');
+            const data = await response.json();
+            
+            if (data.success) {
+                const profile = data.data;
+                this.populateProfileData(profile);
+            } else {
+                this.showNotification('Failed to load profile: ' + data.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error loading profile:', error);
+            this.showNotification('Error loading profile data', 'error');
+        }
+    }
+
+    populateProfileData(profile) {
+        // Update profile display
+        const profileName = document.querySelector('.profile-name-display');
+        if (profileName) {
+            profileName.textContent = `${profile.first_name} ${profile.last_name}`;
+        }
+
+        // Update initials
+        const profileInitials = document.getElementById('profileInitials');
+        if (profileInitials) {
+            const initials = (profile.first_name.charAt(0) + profile.last_name.charAt(0)).toUpperCase();
+            profileInitials.textContent = initials;
+        }
+
+        // Populate personal information fields
+        const personalFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'birthDate'];
+        const personalMapping = {
+            firstName: profile.first_name,
+            lastName: profile.last_name,
+            email: profile.email,
+            phone: profile.phone_number,
+            address: profile.address,
+            birthDate: profile.birth_day
+        };
+
+        personalFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field && personalMapping[fieldId]) {
+                field.value = personalMapping[fieldId];
+            }
+        });
+
+        // Populate work information fields
+        const workFields = ['position', 'department', 'employeeId', 'startDate'];
+        const workMapping = {
+            position: profile.role || 'MANAGER',
+            department: profile.department,
+            employeeId: profile.employee_id,
+            startDate: profile.start_day
+        };
+
+        workFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field && workMapping[fieldId]) {
+                field.value = workMapping[fieldId];
+            }
+        });
+    }
+
+    async saveManagerProfile(formData) {
+        try {
+            const response = await fetch('../../../server/api.php?endpoint=profile&action=update_manager_profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const responseText = await response.text();
+            
+            let data;
+            try {
+                data = JSON.parse(responseText);
+            } catch (parseError) {
+                throw new Error('Invalid server response format');
+            }
+        
+            if (data.success) {
+                this.showNotification('Profile updated successfully!', 'success');
+                // Reload profile data
+                await this.loadManagerProfile();
+            } else {
+                // Only show error if it's not just "no changes made"
+                if (data.message && !data.message.includes('No changes made')) {
+                    this.showNotification('Failed to update profile: ' + data.message, 'error');
+                    throw new Error(data.message);
+                } else {
+                    // If no changes were made, treat it as success
+                    this.showNotification('No changes were needed - profile is already up to date', 'info');
+                }
+            }
+        } catch (error) {
+            console.error('Error saving profile:', error);
+            this.showNotification('Error saving profile: ' + error.message, 'error');
+            throw error;
+        }
     }
 
     setupProfileImageHandler() {
@@ -143,53 +250,40 @@ class ProfileManager {
     }
 
     setupFormHandlers() {
-        // Setup edit buttons
-        const editButtons = document.querySelectorAll('[onclick*="enableEdit"]');
-        editButtons.forEach(button => {
-            const onclickValue = button.getAttribute('onclick');
-            const match = onclickValue.match(/enableEdit\('(.+?)'\)/);
-            if (match) {
-                const section = match[1];
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.enableEdit(section);
-                });
-            }
-        });
+        // Use event delegation to handle all profile section clicks
+        const profileSection = document.getElementById('profile-section');
+        if (profileSection) {
+            // Remove existing event listener if any
+            profileSection.removeEventListener('click', this.handleProfileClick);
+            
+            // Add single event listener using event delegation
+            this.handleProfileClick = this.handleProfileClick.bind(this);
+            profileSection.addEventListener('click', this.handleProfileClick);
+        }
+    }
 
-        // Setup save buttons
-        const saveButtons = document.querySelectorAll('[onclick*="saveChanges"]');
-        saveButtons.forEach(button => {
-            const onclickValue = button.getAttribute('onclick');
-            const match = onclickValue.match(/saveChanges\('(.+?)'\)/);
-            if (match) {
-                const section = match[1];
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.saveChanges(section);
-                });
-            }
-        });
+    handleProfileClick(e) {
+        const target = e.target.closest('[data-edit-section], [data-save-section], [data-cancel-section]');
+        if (!target) return;
 
-        // Setup cancel buttons
-        const cancelButtons = document.querySelectorAll('[onclick*="cancelEdit"]');
-        cancelButtons.forEach(button => {
-            const onclickValue = button.getAttribute('onclick');
-            const match = onclickValue.match(/cancelEdit\('(.+?)'\)/);
-            if (match) {
-                const section = match[1];
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.cancelEdit(section);
-                });
-            }
-        });
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (target.hasAttribute('data-edit-section')) {
+            const section = target.getAttribute('data-edit-section');
+            this.enableEdit(section);
+        } else if (target.hasAttribute('data-save-section')) {
+            const section = target.getAttribute('data-save-section');
+            this.saveChanges(section);
+        } else if (target.hasAttribute('data-cancel-section')) {
+            const section = target.getAttribute('data-cancel-section');
+            this.cancelEdit(section);
+        }
     }
 
     enableEdit(section) {
         const sectionMap = {
-            'personal': ['fullName', 'email', 'phone', 'birthDate'],
-            'work': ['position', 'department', 'employeeId', 'startDate']
+            'personal': ['firstName', 'lastName', 'email', 'phone', 'address', 'birthDate']
         };
 
         const fields = sectionMap[section];
@@ -201,10 +295,13 @@ class ProfileManager {
             const field = document.getElementById(fieldId);
             if (field) {
                 this.originalData[section][fieldId] = field.value;
-                field.removeAttribute('readonly');
-                field.classList.add('editable');
-                field.style.background = '#fff';
-                field.style.borderColor = '#ec4899';
+                // Don't allow editing of employeeId as it's auto-generated
+                if (fieldId !== 'employeeId') {
+                    field.removeAttribute('readonly');
+                    field.classList.add('editable');
+                    field.style.background = '#fff';
+                    field.style.borderColor = '#ec4899';
+                }
             }
         });
 
@@ -215,7 +312,7 @@ class ProfileManager {
         }
 
         // Hide edit button
-        const editBtn = document.querySelector(`[onclick*="enableEdit('${section}')"]`);
+        const editBtn = document.querySelector(`[data-edit-section="${section}"]`);
         if (editBtn) {
             editBtn.style.display = 'none';
         }
@@ -224,85 +321,122 @@ class ProfileManager {
     }
 
     async saveChanges(section) {
+        // Prevent double saves
+        if (this.isSaving) {
+            return;
+        }
+
         const sectionMap = {
-            'personal': ['fullName', 'email', 'phone', 'birthDate'],
-            'work': ['position', 'department', 'employeeId', 'startDate']
+            'personal': ['firstName', 'lastName', 'email', 'phone', 'address', 'birthDate']
         };
 
         const fields = sectionMap[section];
         if (!fields) return;
 
+        // Set saving flag
+        this.isSaving = true;
+
         // Collect form data
         const formData = {};
         let isValid = true;
 
-        fields.forEach(fieldId => {
-            const field = document.getElementById(fieldId);
-            if (field) {
-                formData[fieldId] = field.value;
-                
-                // Basic validation
-                if (field.hasAttribute('required') && !field.value.trim()) {
-                    isValid = false;
-                    field.style.borderColor = '#ef4444';
-                }
-            }
-        });
-
-        if (!isValid) {
-            this.showNotification('Please fill in all required fields.', 'error');
-            return;
-        }
-
-        // Show loading state
-        const saveBtn = document.querySelector(`[onclick*="saveChanges('${section}')"]`);
-        const originalText = saveBtn.innerHTML;
-        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-        saveBtn.disabled = true;
-
-        try {
-            // Simulate API call
-            await this.simulateApiCall(formData);
-
-            // Reset fields
+        if (section === 'personal') {
+            // Handle personal information save
             fields.forEach(fieldId => {
                 const field = document.getElementById(fieldId);
                 if (field) {
-                    field.setAttribute('readonly', 'readonly');
-                    field.classList.remove('editable');
-                    field.style.background = '#f3f4f6';
-                    field.style.borderColor = '#e5e7eb';
+                    // Map field IDs to backend field names
+                    const fieldMapping = {
+                        firstName: 'first_name',
+                        lastName: 'last_name',
+                        email: 'email',
+                        phone: 'phone_number',
+                        address: 'address',
+                        birthDate: 'birth_day'
+                    };
+                    
+                    const fieldValue = field.value.trim();
+                    formData[fieldMapping[fieldId] || fieldId] = fieldValue;
+                    
+                    // Basic validation
+                    if (['firstName', 'lastName', 'email'].includes(fieldId) && !fieldValue) {
+                        isValid = false;
+                        field.style.borderColor = '#ef4444';
+                    } else {
+                        // Reset border color for valid fields
+                        field.style.borderColor = '#e5e7eb';
+                    }
+                    
+                    // Email validation
+                    if (fieldId === 'email' && fieldValue) {
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailRegex.test(fieldValue)) {
+                            isValid = false;
+                            field.style.borderColor = '#ef4444';
+                        }
+                    }
                 }
             });
 
-            // Hide action buttons
-            const actions = document.getElementById(section + 'Actions');
-            if (actions) {
-                actions.style.display = 'none';
+            if (!isValid) {
+                this.showNotification('Please fill in all required fields correctly.', 'error');
+                this.isSaving = false; // Reset saving flag
+                return;
             }
 
-            // Show edit button again
-            const editBtn = document.querySelector(`[onclick*="enableEdit('${section}')"]`);
-            if (editBtn) {
-                editBtn.style.display = 'inline-flex';
+            // Show loading state
+            const saveBtn = document.querySelector(`[data-save-section="${section}"]`);
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            saveBtn.disabled = true;
+
+            try {
+                // Call backend API
+                await this.saveManagerProfile(formData);
+
+                // Reset fields
+                fields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field) {
+                        field.setAttribute('readonly', 'readonly');
+                        field.classList.remove('editable');
+                        field.style.background = '#f3f4f6';
+                        field.style.borderColor = '#e5e7eb';
+                    }
+                });
+
+                // Hide action buttons
+                const actions = document.getElementById(`${section}Actions`);
+                if (actions) actions.style.display = 'none';
+
+                // Show edit button again
+                const editBtn = document.querySelector(`[data-edit-section="${section}"]`);
+                if (editBtn) {
+                    editBtn.style.display = 'inline-flex';
+                }
+
+                this.editingSection = null;
+
+            } catch (error) {
+                this.showNotification('Failed to save changes. Please try again.', 'error');
+            } finally {
+                // Reset button
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+                // Reset saving flag
+                this.isSaving = false;
             }
-
-            this.editingSection = null;
-            this.showNotification('Changes saved successfully!', 'success');
-
-        } catch (error) {
-            this.showNotification('Error saving changes. Please try again.', 'error');
-        } finally {
-            // Reset save button
-            saveBtn.innerHTML = originalText;
-            saveBtn.disabled = false;
+        } else {
+            // Only personal section is editable
+            this.showNotification('This section is read-only.', 'info');
+            // Reset saving flag
+            this.isSaving = false;
         }
     }
 
     cancelEdit(section) {
         const sectionMap = {
-            'personal': ['fullName', 'email', 'phone', 'birthDate'],
-            'work': ['position', 'department', 'employeeId', 'startDate']
+            'personal': ['firstName', 'lastName', 'email', 'phone', 'address', 'birthDate']
         };
 
         const fields = sectionMap[section];
@@ -327,7 +461,7 @@ class ProfileManager {
         }
 
         // Show edit button again
-        const editBtn = document.querySelector(`[onclick*="enableEdit('${section}')"]`);
+        const editBtn = document.querySelector(`[data-edit-section="${section}"]`);
         if (editBtn) {
             editBtn.style.display = 'inline-flex';
         }
@@ -419,13 +553,6 @@ class ProfileManager {
         return this.activeTab;
     }
 }
-
-// Initialize profile manager when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('profile-section')) {
-        window.profileManager = new ProfileManager();
-    }
-});
 
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {

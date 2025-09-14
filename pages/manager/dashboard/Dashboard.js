@@ -3,24 +3,18 @@
 
 // Global functions for backward compatibility
 window.showSection = function(sectionName) {
-    console.log('Switching to section:', sectionName);
-    
     // Hide all sections first
     const sections = document.querySelectorAll('.section');
-    console.log('Found sections:', sections.length);
     
     sections.forEach(section => {
         section.style.display = 'none';
-        console.log('Hiding section:', section.id);
     });
     
     // Show the requested section
     const targetSection = document.getElementById(sectionName + '-section');
-    console.log('Target section:', targetSection);
     
     if (targetSection) {
         targetSection.style.display = 'block';
-        console.log('Showing section:', targetSection.id);
         
         // Refresh data for reports section
         if (sectionName === 'reports' && window.Components && window.Components.reports) {
@@ -56,9 +50,6 @@ window.editProduct = function(productId) {
 
 // Legacy initialization for any remaining functionality
 document.addEventListener('DOMContentLoaded', function() {
-    // Any legacy initialization code can go here
-    console.log('Dashboard legacy compatibility layer loaded');
-    
     // Initialize default section (dashboard)
     setTimeout(() => {
         window.showSection('dashboard');

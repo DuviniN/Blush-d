@@ -82,73 +82,46 @@
             <p class="popular-products-subtitle">Best selling products in each category</p>
         </div>
         <div id="popular-products-list" class="popular-products-grid">
-            <!-- Sample data for design preview -->
-            <div class="popular-product-card">
-                <div class="popular-product-header">
-                    <div class="popular-product-category">Skincare</div>
-                    <div class="popular-product-rank">#1</div>
+            <!-- Dynamic content will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-section">
+        <div class="charts-grid">
+            <!-- Sales by Category Pie Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Sales by Category</h3>
+                    <p class="chart-subtitle">Revenue distribution across categories</p>
                 </div>
-                <div class="popular-product-image">
-                    <i class="fas fa-spa"></i>
-                </div>
-                <div class="popular-product-info">
-                    <div class="popular-product-name">Moisturizing Cream</div>
-                    <div class="popular-product-stats">
-                        <div class="popular-product-revenue">$1,299.80</div>
-                        <div class="popular-product-sold">45 sold</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="popular-product-card">
-                <div class="popular-product-header">
-                    <div class="popular-product-category">Makeup</div>
-                    <div class="popular-product-rank">#1</div>
-                </div>
-                <div class="popular-product-image">
-                    <i class="fas fa-palette"></i>
-                </div>
-                <div class="popular-product-info">
-                    <div class="popular-product-name">Foundation Liquid</div>
-                    <div class="popular-product-stats">
-                        <div class="popular-product-revenue">$955.00</div>
-                        <div class="popular-product-sold">32 sold</div>
-                    </div>
+                <div class="chart-container">
+                    <canvas id="categoryPieChart"></canvas>
                 </div>
             </div>
-            
-            <div class="popular-product-card">
-                <div class="popular-product-header">
-                    <div class="popular-product-category">Fragrances</div>
-                    <div class="popular-product-rank">#1</div>
+
+            <!-- Monthly Sales Line Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Monthly Sales Trend</h3>
+                    <p class="chart-subtitle">Sales performance over last 6 months</p>
                 </div>
-                <div class="popular-product-image">
-                    <i class="fas fa-wind"></i>
-                </div>
-                <div class="popular-product-info">
-                    <div class="popular-product-name">Eau de Parfum</div>
-                    <div class="popular-product-stats">
-                        <div class="popular-product-revenue">$749.97</div>
-                        <div class="popular-product-sold">18 sold</div>
-                    </div>
+                <div class="chart-container">
+                    <canvas id="monthlySalesChart"></canvas>
                 </div>
             </div>
-            
-            <div class="popular-product-card">
-                <div class="popular-product-header">
-                    <div class="popular-product-category">Haircare</div>
-                    <div class="popular-product-rank">#1</div>
-                </div>
-                <div class="popular-product-image">
-                    <i class="fas fa-cut"></i>
-                </div>
-                <div class="popular-product-info">
-                    <div class="popular-product-name">Argan Oil Shampoo</div>
-                    <div class="popular-product-stats">
-                        <div class="popular-product-revenue">$502.00</div>
-                        <div class="popular-product-sold">28 sold</div>
-                    </div>
-                </div>
+        </div>
+    </div>
+
+    <!-- Stock Overview Chart -->
+    <div class="stock-overview-section">
+        <div class="chart-card full-width">
+            <div class="chart-header">
+                <h3 class="chart-title">Stock Overview by Category</h3>
+                <p class="chart-subtitle">Current inventory levels across categories</p>
+            </div>
+            <div class="chart-container">
+                <canvas id="stockOverviewChart"></canvas>
             </div>
         </div>
     </div>

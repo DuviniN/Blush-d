@@ -3,7 +3,6 @@
     <div class="modal-content">
         <div class="modal-header">
             <h2><i class="fas fa-plus-circle"></i> Add New Product</h2>
-            <span class="close" onclick="closeModal('addProductModal')">&times;</span>
         </div>
         <div class="modal-body">
             <form id="addProductForm" class="modal-form">
@@ -12,43 +11,17 @@
                         <label class="form-label">
                             <i class="fas fa-tag"></i> Product Name *
                         </label>
-                        <input type="text" name="productName" class="form-input" placeholder="Enter product name" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-building"></i> Brand *
-                        </label>
-                        <select name="brand" class="form-input" required>
-                            <option value="">Select Brand</option>
-                            <option value="Clinique">Clinique</option>
-                            <option value="Estee Lauder">Estée Lauder</option>
-                            <option value="L'Oreal">L'Oréal</option>
-                            <option value="Maybelline">Maybelline</option>
-                            <option value="Revlon">Revlon</option>
-                            <option value="Sephora">Sephora</option>
-                        </select>
+                        <input type="text" name="product_name" class="form-input" placeholder="Enter product name" required>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">
                             <i class="fas fa-layer-group"></i> Category *
                         </label>
-                        <select name="category" class="form-input" required>
+                        <select name="category_id" id="productCategorySelect" class="form-input" required>
                             <option value="">Select Category</option>
-                            <option value="Skincare">Skincare</option>
-                            <option value="Makeup">Makeup</option>
-                            <option value="Fragrance">Fragrance</option>
-                            <option value="Hair Care">Hair Care</option>
-                            <option value="Body Care">Body Care</option>
+                            <!-- Categories will be loaded dynamically -->
                         </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-palette"></i> Type
-                        </label>
-                        <input type="text" name="type" class="form-input" placeholder="e.g., Foundation, Lipstick, Serum">
                     </div>
 
                     <div class="form-group">
@@ -67,9 +40,23 @@
 
                     <div class="form-group full-width">
                         <label class="form-label">
+                            <i class="fas fa-align-left"></i> Mini Description
+                        </label>
+                        <textarea name="mini_description" class="form-textarea" placeholder="Product mini description (optional)" rows="1"></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">
                             <i class="fas fa-align-left"></i> Description
                         </label>
                         <textarea name="description" class="form-textarea" placeholder="Product description (optional)" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">
+                            <i class="fas fa-list"></i> Ingredients
+                        </label>
+                        <textarea name="ingredients" class="form-textarea" placeholder="Product ingredients (optional)" rows="2"></textarea>
                     </div>
 
                     <div class="form-group full-width">

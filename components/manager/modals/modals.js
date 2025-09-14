@@ -2,6 +2,7 @@
 class ModalManager {
     constructor() {
         this.activeModal = null;
+        this.isSubmitting = false; // Flag to prevent duplicate submissions
         this.init();
     }
 
@@ -11,6 +12,7 @@ class ModalManager {
         this.setupPasswordFeatures();
         this.setupProductSearch();
         this.setupFileUpload();
+        this.loadCategories();
     }
 
     setupModalHandlers() {
@@ -71,6 +73,11 @@ class ModalManager {
             this.activeModal = modalId;
             document.body.style.overflow = 'hidden';
             
+            // Load categories when opening add product modal
+            if (modalId === 'addProductModal') {
+                this.loadCategories();
+            }
+            
             // Focus first input
             const firstInput = modal.querySelector('input, select, textarea');
             if (firstInput) {
@@ -95,54 +102,136 @@ class ModalManager {
         }
     }
 
+    async loadCategories() {
+        const categorySelect = document.getElementById('productCategorySelect');
+        if (!categorySelect) return;
+
+        try {
+            const response = await fetch('../../../server/api.php?endpoint=products&action=categories');
+            const result = await response.json();
+            if (result.success && result.data) {
+                // Clear existing options except the first one
+                categorySelect.innerHTML = '<option value="">Select Category</option>';
+                
+                // Add categories
+                result.data.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.category_id;
+                    option.textContent = category.name;
+                    categorySelect.appendChild(option);
+                });
+
+            } else {
+                this.showNotification('Failed to load categories', 'warning');
+            }
+        } catch (error) {
+            console.error('Error loading categories:', error);
+            this.showNotification('Error loading categories', 'error');
+        }
+    }
+
     async handleAddProduct(formData) {
         if (!this.validateAddProductForm(formData)) return;
+        
+        // Prevent duplicate submissions
+        if (this.isSubmitting) {
+            console.log('Already submitting, ignoring duplicate request');
+            return;
+        }
+        
+        this.isSubmitting = true;
 
-        const submitBtn = document.querySelector('#addProductForm button[type="submit"]');
+        const submitBtn = document.querySelector('button[form="addProductForm"][type="submit"]');
+        if (!submitBtn) {
+            this.showNotification('Submit button not found', 'error');
+            this.isSubmitting = false;
+            return;
+        }
+        
         const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding Product...';
         submitBtn.disabled = true;
 
         try {
-            // Simulate API call
-            await this.simulateApiCall();
-            
-            this.showNotification('Product added successfully!', 'success');
-            this.closeModal('addProductModal');
-            
-            // Refresh dashboard if available
-            if (window.dashboardManager) {
-                window.dashboardManager.refreshStats();
+            // Send FormData directly (supports file uploads)
+            const response = await fetch('../../../server/api.php?endpoint=products&action=add_product', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                this.showNotification('Product added successfully!', 'success');
+                this.closeModal('addProductModal');
+                
+                // Refresh dashboard if available
+                if (window.dashboardManager) {
+                    window.dashboardManager.refreshStats();
+                }
+                
+                // Refresh products list if available
+                if (window.reportsManager) {
+                    window.reportsManager.fetchInventoryReport();
+                }
+            } else {
+                this.showNotification(result.message || 'Failed to add product', 'error');
             }
             
         } catch (error) {
+            console.error('Error adding product:', error);
             this.showNotification('Error adding product. Please try again.', 'error');
         } finally {
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
+            this.isSubmitting = false; // Reset the flag
         }
     }
 
     async handleAddStock(formData) {
         if (!this.validateAddStockForm(formData)) return;
 
-        const submitBtn = document.querySelector('#addStockForm button[type="submit"]');
+        const submitBtn = document.querySelector('button[form="addStockForm"][type="submit"]');
+        if (!submitBtn) {
+            this.showNotification('Submit button not found', 'error');
+            return;
+        }
+        
         const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding Stock...';
         submitBtn.disabled = true;
 
         try {
-            await this.simulateApiCall();
-            
-            this.showNotification('Stock updated successfully!', 'success');
-            this.closeModal('addStockModal');
-            
-            // Refresh reports if available
-            if (window.reportsManager) {
-                window.reportsManager.loadData();
+            // Prepare data for backend
+            const stockData = {
+                product_id: formData.get('selectedProductId'),
+                quantity: parseInt(formData.get('quantityToAdd'))
+            };
+
+            // Send request to backend
+            const response = await fetch('../../../server/api.php?endpoint=products&action=update_stock', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(stockData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showNotification('Stock updated successfully!', 'success');
+                this.closeModal('addStockModal');
+                
+                // Refresh reports if available
+                if (window.reportsManager) {
+                    window.reportsManager.loadData();
+                }
+            } else {
+                this.showNotification(result.message || 'Error updating stock', 'error');
             }
             
         } catch (error) {
+            console.error('Error updating stock:', error);
             this.showNotification('Error updating stock. Please try again.', 'error');
         } finally {
             submitBtn.innerHTML = originalText;
@@ -153,7 +242,12 @@ class ModalManager {
     async handleChangePassword(formData) {
         if (!this.validatePasswordForm(formData)) return;
 
-        const submitBtn = document.querySelector('#changePasswordForm button[type="submit"]');
+        const submitBtn = document.querySelector('button[form="changePasswordForm"][type="submit"]');
+        if (!submitBtn) {
+            this.showNotification('Submit button not found', 'error');
+            return;
+        }
+        
         const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Changing Password...';
         submitBtn.disabled = true;
@@ -173,7 +267,7 @@ class ModalManager {
     }
 
     validateAddProductForm(formData) {
-        const requiredFields = ['productName', 'brand', 'category', 'price', 'stock'];
+        const requiredFields = ['product_name', 'category_id', 'price', 'stock'];
         return this.validateRequiredFields(requiredFields, formData);
     }
 
@@ -206,6 +300,7 @@ class ModalManager {
     }
 
     validateRequiredFields(fields, formData) {
+        console.log('Validating fields:', fields, formData);
         for (const field of fields) {
             if (!formData.get(field)) {
                 this.showNotification(`Please fill in the ${field.replace(/([A-Z])/g, ' $1').toLowerCase()} field.`, 'error');
@@ -398,6 +493,7 @@ class ModalManager {
                 }, 300);
             });
         }
+        // If no search input exists (like in simplified add stock modal), skip setup
     }
 
     async searchProducts(query) {
@@ -410,22 +506,27 @@ class ModalManager {
         }
 
         try {
-            // Simulate product search
-            const mockProducts = [
-                { id: 1, name: 'Advanced Night Repair', brand: 'Estée Lauder', stock: 15, price: 59.99 },
-                { id: 2, name: 'Revitalift Moisturizer', brand: 'L\'Oréal', stock: 8, price: 24.99 },
-                { id: 3, name: 'Fit Me Foundation', brand: 'Maybelline', stock: 23, price: 7.99 }
-            ];
+            // Fetch real products from backend
+            const response = await fetch('../../../server/ManagerController.php?action=products');
+            const result = await response.json();
+            
+            if (result.success && result.data) {
+                // Filter products based on query
+                const filtered = result.data.filter(product => 
+                    product.product_name.toLowerCase().includes(query.toLowerCase()) ||
+                    (product.brand && product.brand.toLowerCase().includes(query.toLowerCase()))
+                );
 
-            const filtered = mockProducts.filter(product => 
-                product.name.toLowerCase().includes(query.toLowerCase()) ||
-                product.brand.toLowerCase().includes(query.toLowerCase())
-            );
-
-            this.displaySearchResults(filtered);
+                this.displaySearchResults(filtered);
+            } else {
+                dropdown.innerHTML = '<div class="search-dropdown-item">No products found</div>';
+                dropdown.style.display = 'block';
+            }
 
         } catch (error) {
             console.error('Error searching products:', error);
+            dropdown.innerHTML = '<div class="search-dropdown-item">Error loading products</div>';
+            dropdown.style.display = 'block';
         }
     }
 
@@ -440,8 +541,8 @@ class ModalManager {
                 const item = document.createElement('div');
                 item.className = 'search-dropdown-item';
                 item.innerHTML = `
-                    <strong>${product.name}</strong><br>
-                    <small>${product.brand} - $${product.price} (${product.stock} in stock)</small>
+                    <strong>${product.product_name}</strong><br>
+                    <small>${product.brand || 'No brand'} - $${product.price} (${product.stock} in stock)</small>
                 `;
                 item.addEventListener('click', () => {
                     this.selectProduct(product);
@@ -454,8 +555,8 @@ class ModalManager {
     }
 
     selectProduct(product) {
-        document.querySelector('input[name="productSearch"]').value = product.name;
-        document.getElementById('selectedProductId').value = product.id;
+        document.querySelector('input[name="productSearch"]').value = product.product_name;
+        document.getElementById('selectedProductId').value = product.product_id;
         document.getElementById('productSearchDropdown').style.display = 'none';
 
         // Show product info
@@ -465,8 +566,8 @@ class ModalManager {
     displaySelectedProduct(product) {
         const display = document.getElementById('productInfoDisplay');
         if (display) {
-            document.getElementById('displayProductName').textContent = product.name;
-            document.getElementById('displayBrand').textContent = product.brand;
+            document.getElementById('displayProductName').textContent = product.product_name;
+            document.getElementById('displayBrand').textContent = product.brand || 'No brand';
             document.getElementById('displayCurrentStock').textContent = product.stock;
             document.getElementById('displayPrice').textContent = `$${product.price}`;
             display.style.display = 'block';
@@ -484,7 +585,8 @@ class ModalManager {
 
     handleFileUpload(event) {
         const file = event.target.files[0];
-        const previewId = event.target.id + 'Preview';
+        const input = event.target;
+        const previewId = input.id.replace('Input', 'Preview');
         const preview = document.getElementById(previewId);
 
         if (file && preview) {
@@ -507,7 +609,11 @@ class ModalManager {
         const preview = document.getElementById(previewId);
         
         if (input) input.value = '';
-        if (preview) preview.style.display = 'none';
+        if (preview) {
+            preview.style.display = 'none';
+            const img = preview.querySelector('img');
+            if (img) img.src = '';
+        }
     }
 
     simulateApiCall() {
@@ -569,53 +675,55 @@ class ModalManager {
 
 // Global functions for backward compatibility
 window.showModal = function(modalId) {
-    if (window.modalManager) {
-        window.modalManager.showModal(modalId);
+    if (window.modalManager || window.Components?.modals) {
+        const manager = window.modalManager || window.Components.modals;
+        manager.showModal(modalId);
     }
 };
 
 window.closeModal = function(modalId) {
-    if (window.modalManager) {
-        window.modalManager.closeModal(modalId);
+    if (window.modalManager || window.Components?.modals) {
+        const manager = window.modalManager || window.Components.modals;
+        manager.closeModal(modalId);
     }
 };
 
 window.togglePassword = function(inputName) {
     const input = document.querySelector(`input[name="${inputName}"]`);
     const button = input.parentElement.querySelector('.password-toggle');
-    if (window.modalManager) {
-        window.modalManager.togglePasswordVisibility(input, button);
+    if (window.modalManager || window.Components?.modals) {
+        const manager = window.modalManager || window.Components.modals;
+        manager.togglePasswordVisibility(input, button);
     }
 };
 
 window.checkPasswordStrength = function(password) {
-    if (window.modalManager) {
-        window.modalManager.checkPasswordStrength(password);
+    if (window.modalManager || window.Components?.modals) {
+        const manager = window.modalManager || window.Components.modals;
+        manager.checkPasswordStrength(password);
     }
 };
 
 window.checkPasswordMatch = function() {
-    if (window.modalManager) {
-        window.modalManager.checkPasswordMatch();
+    if (window.modalManager || window.Components?.modals) {
+        const manager = window.modalManager || window.Components.modals;
+        manager.checkPasswordMatch();
     }
 };
 
 window.searchProducts = function(query) {
-    if (window.modalManager) {
-        window.modalManager.searchProducts(query);
+    if (window.modalManager || window.Components?.modals) {
+        const manager = window.modalManager || window.Components.modals;
+        manager.searchProducts(query);
     }
 };
 
 window.removeImage = function(inputId, previewId) {
-    if (window.modalManager) {
-        window.modalManager.removeImage(inputId, previewId);
+    if (window.modalManager || window.Components?.modals) {
+        const manager = window.modalManager || window.Components.modals;
+        manager.removeImage(inputId, previewId);
     }
 };
-
-// Initialize modal manager when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    window.modalManager = new ModalManager();
-});
 
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {

@@ -1,273 +1,174 @@
 <?php
-session_start();
+/**
+ * Password Controller for Blush-d Application
+ * Handles password change operations with proper validation and security
+ */
+
+require_once 'BaseController.php';
 require_once 'config/db.php';
 
-class PasswordController {
-    private $conn;
+class PasswordController extends BaseController {
     
-    public function __construct() {
-        global $conn;
-        $this->conn = $conn;
+    public function __construct($connection) {
+        parent::__construct($connection);
+        session_start();
     }
     
-    public function changePassword($managerId, $currentPassword, $newPassword) {
-        try {
-            // First, verify the current password
-            $stmt = $this->conn->prepare("SELECT password FROM managers WHERE id = ?");
-            $stmt->bind_param("i", $managerId);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $manager = $result->fetch_assoc();
+    public function handleRequest() {
+        // Check if user is logged in
+        if (!isset($_SESSION['user_id'])) {
+            $this->sendResponse(false, 'User not authenticated', null, 401);
+            return;
+        }
+        
+        $method = $_SERVER['REQUEST_METHOD'];
+        $input = json_decode(file_get_contents('php://input'), true);
+        
+        if ($method === 'POST') {
+            $action = $input['action'] ?? '';
             
-            if (!$manager) {
-                return [
-                    'success' => false,
-                    'message' => 'Manager not found'
-                ];
+            switch ($action) {
+                case 'change_password':
+                    $this->changePassword($input);
+                    break;
+                case 'validate_current_password':
+                    $this->validateCurrentPassword($input);
+                    break;
+                default:
+                    $this->sendResponse(false, 'Invalid action', null, 400);
             }
-            
-            // Verify current password (assuming passwords are hashed)
-            if (!password_verify($currentPassword, $manager['password'])) {
-                return [
-                    'success' => false,
-                    'message' => 'Current password is incorrect'
-                ];
-            }
-            
-            // Validate new password strength
-            $passwordValidation = $this->validatePasswordStrength($newPassword);
-            if (!$passwordValidation['valid']) {
-                return [
-                    'success' => false,
-                    'message' => $passwordValidation['message']
-                ];
-            }
-            
-            // Hash the new password
-            $hashedNewPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-            
-            // Update the password in database
-            $updateStmt = $this->conn->prepare("
-                UPDATE managers 
-                SET password = ?, password_changed_at = NOW() 
-                WHERE id = ?
-            ");
-            
-            $updateStmt->bind_param("si", $hashedNewPassword, $managerId);
-            $result = $updateStmt->execute();
-            
-            if ($result) {
-                // Log the password change for security
-                $this->logPasswordChange($managerId);
-                
-                return [
-                    'success' => true,
-                    'message' => 'Password changed successfully'
-                ];
-            } else {
-                return [
-                    'success' => false,
-                    'message' => 'Failed to update password'
-                ];
-            }
-            
-        } catch (Exception $e) {
-            error_log("Password change error: " . $e->getMessage());
-            return [
-                'success' => false,
-                'message' => 'An error occurred while changing password'
-            ];
+        } else {
+            $this->sendResponse(false, 'Method not allowed', null, 405);
         }
     }
     
+    /**
+     * Change user password with validation
+     */
+    private function changePassword($input) {
+        $currentPassword = $input['currentPassword'] ?? '';
+        $newPassword = $input['newPassword'] ?? '';
+        $userId = $_SESSION['user_id'];
+        
+        // Validate input
+        if (empty($currentPassword) || empty($newPassword)) {
+            $this->sendResponse(false, 'Current password and new password are required');
+            return;
+        }
+        
+        // Get current user data
+        $stmt = $this->conn->prepare("SELECT password FROM User WHERE user_id = ?");
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows === 0) {
+            $this->sendResponse(false, 'User not found');
+            return;
+        }
+        
+        $user = $result->fetch_assoc();
+        
+        // Verify current password
+        if (!password_verify($currentPassword, $user['password'])) {
+            $this->sendResponse(false, 'Current password is incorrect');
+            return;
+        }
+        
+        // Validate new password strength (server-side validation)
+        if (!$this->validatePasswordStrength($newPassword)) {
+            $this->sendResponse(false, 'New password does not meet security requirements');
+            return;
+        }
+        
+        // Check if new password is different from current
+        if (password_verify($newPassword, $user['password'])) {
+            $this->sendResponse(false, 'New password must be different from current password');
+            return;
+        }
+        
+        // Hash new password
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        
+        // Update password in database
+        $updateStmt = $this->conn->prepare("UPDATE User SET password = ?, updated_at = NOW() WHERE user_id = ?");
+        $updateStmt->bind_param("si", $hashedPassword, $userId);
+        
+        if ($updateStmt->execute()) {
+            $this->sendResponse(true, 'Password changed successfully');
+        } else {
+            $this->sendResponse(false, 'Failed to update password');
+        }
+    }
+    
+    /**
+     * Validate current password without changing it
+     */
+    private function validateCurrentPassword($input) {
+        $currentPassword = $input['currentPassword'] ?? '';
+        $userId = $_SESSION['user_id'];
+        
+        if (empty($currentPassword)) {
+            $this->sendResponse(false, 'Current password is required');
+            return;
+        }
+        
+        $stmt = $this->conn->prepare("SELECT password FROM User WHERE user_id = ?");
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows === 0) {
+            $this->sendResponse(false, 'User not found');
+            return;
+        }
+        
+        $user = $result->fetch_assoc();
+        
+        if (password_verify($currentPassword, $user['password'])) {
+            $this->sendResponse(true, 'Current password is valid');
+        } else {
+            $this->sendResponse(false, 'Current password is incorrect');
+        }
+    }
+    
+    /**
+     * Validate password strength
+     */
     private function validatePasswordStrength($password) {
-        $errors = [];
-        
-        // Check minimum length
+        // At least 8 characters
         if (strlen($password) < 8) {
-            $errors[] = "Password must be at least 8 characters long";
+            return false;
         }
         
-        // Check for uppercase letter
+        // At least one uppercase letter
         if (!preg_match('/[A-Z]/', $password)) {
-            $errors[] = "Password must contain at least one uppercase letter";
+            return false;
         }
         
-        // Check for lowercase letter
+        // At least one lowercase letter
         if (!preg_match('/[a-z]/', $password)) {
-            $errors[] = "Password must contain at least one lowercase letter";
+            return false;
         }
         
-        // Check for number
+        // At least one number
         if (!preg_match('/\d/', $password)) {
-            $errors[] = "Password must contain at least one number";
+            return false;
         }
         
-        // Check for special character
+        // At least one special character
         if (!preg_match('/[!@#$%^&*(),.?":{}|<>]/', $password)) {
-            $errors[] = "Password must contain at least one special character";
+            return false;
         }
         
-        // Check if password is too common (basic check)
-        $commonPasswords = [
-            'password', '123456789', 'qwerty123', 'admin123', 
-            'password123', '12345678', 'welcome123'
-        ];
-        
-        if (in_array(strtolower($password), $commonPasswords)) {
-            $errors[] = "Password is too common, please choose a stronger password";
-        }
-        
-        return [
-            'valid' => empty($errors),
-            'message' => empty($errors) ? 'Password is strong' : implode(', ', $errors)
-        ];
-    }
-    
-    private function logPasswordChange($managerId) {
-        try {
-            // Create password change log entry
-            $logStmt = $this->conn->prepare("
-                INSERT INTO password_change_log (manager_id, changed_at, ip_address, user_agent) 
-                VALUES (?, NOW(), ?, ?)
-            ");
-            
-            $ipAddress = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-            $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
-            
-            $logStmt->bind_param("iss", $managerId, $ipAddress, $userAgent);
-            $logStmt->execute();
-        } catch (Exception $e) {
-            // Log error but don't fail the password change
-            error_log("Failed to log password change: " . $e->getMessage());
-        }
-    }
-    
-    public function getPasswordHistory($managerId, $limit = 5) {
-        try {
-            $stmt = $this->conn->prepare("
-                SELECT changed_at, ip_address 
-                FROM password_change_log 
-                WHERE manager_id = ? 
-                ORDER BY changed_at DESC 
-                LIMIT ?
-            ");
-            
-            $stmt->bind_param("ii", $managerId, $limit);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            
-            $history = [];
-            while ($row = $result->fetch_assoc()) {
-                $history[] = $row;
-            }
-            
-            return [
-                'success' => true,
-                'data' => $history
-            ];
-            
-        } catch (Exception $e) {
-            error_log("Password history error: " . $e->getMessage());
-            return [
-                'success' => false,
-                'message' => 'Failed to retrieve password history'
-            ];
-        }
-    }
-    
-    public function checkPasswordExpiry($managerId) {
-        try {
-            $stmt = $this->conn->prepare("
-                SELECT password_changed_at, 
-                       DATEDIFF(NOW(), password_changed_at) as days_since_change
-                FROM managers 
-                WHERE id = ?
-            ");
-            
-            $stmt->bind_param("i", $managerId);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
-            
-            $daysSinceChange = $row['days_since_change'] ?? 0;
-            $passwordExpiryDays = 90; // Password expires after 90 days
-            
-            $isExpired = $daysSinceChange >= $passwordExpiryDays;
-            $daysUntilExpiry = $passwordExpiryDays - $daysSinceChange;
-            
-            return [
-                'success' => true,
-                'data' => [
-                    'is_expired' => $isExpired,
-                    'days_since_change' => $daysSinceChange,
-                    'days_until_expiry' => max(0, $daysUntilExpiry),
-                    'should_warn' => $daysUntilExpiry <= 7 && $daysUntilExpiry > 0
-                ]
-            ];
-            
-        } catch (Exception $e) {
-            error_log("Password expiry check error: " . $e->getMessage());
-            return [
-                'success' => false,
-                'message' => 'Failed to check password expiry'
-            ];
-        }
+        return true;
     }
 }
 
-// Handle API requests
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $input = json_decode(file_get_contents('php://input'), true);
-    $action = $input['action'] ?? '';
-    
-    $passwordController = new PasswordController();
-    
-    header('Content-Type: application/json');
-    
-    switch ($action) {
-        case 'change_password':
-            // Get manager ID from session (in real app)
-            $managerId = $_SESSION['manager_id'] ?? 1; // Default for demo
-            
-            $currentPassword = $input['currentPassword'] ?? '';
-            $newPassword = $input['newPassword'] ?? '';
-            
-            if (empty($currentPassword) || empty($newPassword)) {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Current password and new password are required'
-                ]);
-                exit;
-            }
-            
-            $result = $passwordController->changePassword($managerId, $currentPassword, $newPassword);
-            echo json_encode($result);
-            break;
-            
-        case 'password_history':
-            $managerId = $_SESSION['manager_id'] ?? 1;
-            $result = $passwordController->getPasswordHistory($managerId);
-            echo json_encode($result);
-            break;
-            
-        case 'check_expiry':
-            $managerId = $_SESSION['manager_id'] ?? 1;
-            $result = $passwordController->checkPasswordExpiry($managerId);
-            echo json_encode($result);
-            break;
-            
-        default:
-            echo json_encode([
-                'success' => false,
-                'message' => 'Invalid action'
-            ]);
-            break;
-    }
-} else {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Only POST requests are allowed'
-    ]);
+// Handle direct access to this file
+if (basename($_SERVER['PHP_SELF']) === 'PasswordController.php') {
+    require_once 'config/db.php';
+    $controller = new PasswordController($conn);
+    $controller->handleRequest();
 }
 ?>
