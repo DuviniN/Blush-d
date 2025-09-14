@@ -8,19 +8,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
     $password = $_POST['password'];
 
-    $stmt = $conn->prepare("SELECT id, full_name, password FROM users WHERE email = ?");
+    // Updated query for new User table
+    $stmt = $conn->prepare("SELECT user_id, first_name, last_name, password FROM User WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $stmt->store_result();
 
     if ($stmt->num_rows > 0) {
-        $stmt->bind_result($userId, $fullName, $hashedPassword);
+        $stmt->bind_result($userId, $firstName, $lastName, $hashedPassword);
         $stmt->fetch();
 
         if (password_verify($password, $hashedPassword)) {
             $_SESSION['user_id'] = $userId;
-            $_SESSION['user_name'] = $fullName;
-            $_SESSION['success'] = "✅ Login successful! Welcome, $fullName";
+            $_SESSION['user_name'] = $firstName . " " . $lastName;
+            $_SESSION['success'] = "✅ Login successful! Welcome, " . $firstName;
             header("Location: ../dashboard/dashboard.php");
             exit();
         } else {

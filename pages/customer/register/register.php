@@ -9,19 +9,24 @@ session_start();
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = trim($_POST['name']);
+    $firstName = trim($_POST['first_name']);
+    $lastName = trim($_POST['last_name']);
     $email = trim($_POST['email']);
     $countryCode = trim($_POST['countryCode']);
     $mobile = trim($_POST['mobile']);
     $password = $_POST['password'];
 
+    // Combine phone number with country code
+    $phoneNumber = $countryCode . $mobile;
+
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     // Prepare statement to prevent SQL injection
-    $stmt = $conn->prepare("INSERT INTO users (full_name, email, country_code, mobile, password) VALUES (?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO User (first_name, last_name, email, password, phone_number, role) 
+                            VALUES (?, ?, ?, ?, ?, 'CUSTOMER')");
     if (!$stmt) die("Prepare failed: " . $conn->error);
 
-    $stmt->bind_param("sssss", $name, $email, $countryCode, $mobile, $hashedPassword);
+    $stmt->bind_param("sssss", $firstName, $lastName, $email, $hashedPassword, $phoneNumber);
 
     if (!$stmt->execute()) {
         // Check duplicate email
@@ -55,8 +60,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <h2>Create Account</h2>
   <form id="registerForm" method="POST" action="">
     <div class="input-group">
-      <label for="name">Full Name</label>
-      <input type="text" id="name" name="name" placeholder="Enter your name" required>
+      <label for="first_name">First Name</label>
+      <input type="text" id="first_name" name="first_name" placeholder="Enter your first name" required>
+    </div>
+
+    <div class="input-group">
+      <label for="last_name">Last Name</label>
+      <input type="text" id="last_name" name="last_name" placeholder="Enter your last name" required>
     </div>
 
     <div class="input-group">

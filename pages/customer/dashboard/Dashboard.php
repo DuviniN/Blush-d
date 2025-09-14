@@ -12,11 +12,15 @@ $category = isset($_GET['cat']) ? $_GET['cat'] : 'All';
 
 // Fetch products based on category
 if ($category === 'All') {
-    $sql = "SELECT productID, product_name, mini_description, price, image_id FROM products";
+    $sql = "SELECT p.product_id, p.product_name, p.mini_descrip, p.price, p.image_id, c.name AS category_name
+            FROM Products p
+            LEFT JOIN Category c ON p.category_id = c.category_id";
     $stmt = $conn->prepare($sql);
 } else {
-    $sql = "SELECT productID, product_name, mini_description, price, image_id 
-            FROM products WHERE category = ?";
+    $sql = "SELECT p.product_id, p.product_name, p.mini_descrip, p.price, p.image_id, c.name AS category_name
+            FROM Products p
+            LEFT JOIN Category c ON p.category_id = c.category_id
+            WHERE c.name = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $category);
 }
@@ -58,12 +62,12 @@ $result = $stmt->get_result();
 
 <div class="product-grid">
 <?php while($row = $result->fetch_assoc()): ?>
-    <a href="../product/product.php?id=<?php echo $row['productID']; ?>" class="product-card">
-        <img src="../../../assets/images/<?php echo htmlspecialchars($row['image_id']); ?>.png" 
+    <a href="../product/product.php?id=<?php echo $row['product_id']; ?>" class="product-card">
+        <img src="../../../assets/products/<?php echo htmlspecialchars($row['product_id'] ?? 'default'); ?>.png" 
              alt="<?php echo htmlspecialchars($row['product_name']); ?>">
         <div class="product-info">
             <h3><?php echo htmlspecialchars($row['product_name']); ?></h3>
-            <p class="mini-desc"><?php echo htmlspecialchars($row['mini_description']); ?></p>
+            <p class="mini-desc"><?php echo htmlspecialchars($row['mini_descrip'] ?? substr($row['description'],0,80) . '...'); ?></p>
             <p class="price">$<?php echo number_format($row['price'], 2); ?></p>
         </div>
     </a>
