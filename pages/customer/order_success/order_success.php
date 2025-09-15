@@ -82,7 +82,7 @@ $customer_name = $first_order['first_name'] . ' ' . $first_order['last_name'];
             <ul>
                 <?php foreach ($order_items as $item): ?>
                     <li>
-                        <img src="../../../assets/products/<?php echo $item['image_id']; ?>.png" alt="<?php echo htmlspecialchars($item['product_name']); ?>" style="width:50px; height:50px; vertical-align:middle;">
+                        <img src="../../../assets/products/<?php echo $item['product_id']; ?>.png" alt="<?php echo htmlspecialchars($item['product_name']); ?>" style="width:50px; height:50px; vertical-align:middle;">
                         <?php echo htmlspecialchars($item['product_name']); ?> - Quantity: <?php echo $item['quantity']; ?> - Price: $<?php echo number_format($item['price'], 2); ?>
                     </li>
                 <?php endforeach; ?>
