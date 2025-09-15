@@ -1,5 +1,8 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../login/login.php");
     exit();
@@ -17,7 +20,7 @@ $productID = intval($_GET['id']);
 $quantity = isset($_GET['qty']) ? intval($_GET['qty']) : 1;
 
 // Fetch product
-$sql = "SELECT * FROM products WHERE productID = ?";
+$sql = "SELECT * FROM Products WHERE product_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $productID);
 $stmt->execute();
@@ -28,19 +31,19 @@ if (!$product) {
     exit();
 }
 
-if ($product['quantity'] <= 0) {
+if ($product['stock'] <= 0) {
     echo "<script>alert('Sorry, this product is out of stock.'); window.location.href='../dashboard/dashboard.php?cat=All';</script>";
     exit();
 }
 
-if ($quantity <= 0 || $quantity > $product['quantity']) {
-    echo "<script>alert('Only {$product['quantity']} items are available.'); window.location.href='../product/product.php?id={$productID}';</script>";
+if ($quantity <= 0 || $quantity > $product['stock']) {
+    echo "<script>alert('Only {$product['stock']} items are available.'); window.location.href='../product/product.php?id={$productID}';</script>";
     exit();
 }
 
 // Fetch user
 $userID = $_SESSION['user_id'];
-$sql_user = "SELECT * FROM users WHERE id = ?";
+$sql_user = "SELECT * FROM User WHERE user_id = ?";
 $stmt_user = $conn->prepare($sql_user);
 $stmt_user->bind_param("i", $userID);
 $stmt_user->execute();
@@ -54,39 +57,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $city = trim($_POST['city']);
     $postal_code = trim($_POST['postal_code']);
     $payment_method = $_POST['payment_method'];
+
     $total = $product['price'] * $quantity;
 
     if (!empty($house_no) && !empty($street1) && !empty($city) && !empty($postal_code) && !empty($payment_method)) {
+        // Start transaction
+        $conn->begin_transaction();
 
-        $sql_order = "INSERT INTO orders 
-            (user_id, product_id, quantity, total, house_no, street1, street2, city, postal_code, payment_method) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt_order = $conn->prepare($sql_order);
-        $stmt_order->bind_param(
-            "iiidssssss",
-            $userID,
-            $productID,
-            $quantity,
-            $total,
-            $house_no,
-            $street1,
-            $street2,
-            $city,
-            $postal_code,
-            $payment_method
-        );
+        try {
+            // Insert into Order
+            $sql_order = "INSERT INTO `Order` 
+                (order_date, total_price, house_no, street1, street2, city, postal_code, payment_method, user_id) 
+                VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt_order = $conn->prepare($sql_order);
+            $stmt_order->bind_param("dssssssi", $total, $house_no, $street1, $street2, $city, $postal_code, $payment_method, $userID);
+            $stmt_order->execute();
+            $orderID = $stmt_order->insert_id;
 
-        if ($stmt_order->execute()) {
+            // Insert into Order_Item
+            $sql_item = "INSERT INTO Order_Item (quantity, price, order_id, product_id) VALUES (?, ?, ?, ?)";
+            $stmt_item = $conn->prepare($sql_item);
+            $stmt_item->bind_param("idii", $quantity, $product['price'], $orderID, $productID);
+            $stmt_item->execute();
+
             // Reduce stock
-            $sql_update = "UPDATE products SET quantity = quantity - ? WHERE productID = ?";
+            $sql_update = "UPDATE Products SET stock = stock - ? WHERE product_id = ?";
             $stmt_update = $conn->prepare($sql_update);
             $stmt_update->bind_param("ii", $quantity, $productID);
             $stmt_update->execute();
 
-            // Redirect to success page
-            header("Location: ../order_success/order_success.php?order_id=" . $stmt_order->insert_id);
+            // Commit transaction
+            $conn->commit();
+
+            header("Location: ../order_success/order_success.php?order_id=" . $orderID);
             exit();
-        } else {
+        } catch (Exception $e) {
+            $conn->rollback();
             $error = "Failed to place order. Please try again.";
         }
     } else {
@@ -114,14 +120,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php if(isset($error)) echo "<p class='error'>$error</p>"; ?>
         <form method="post">
             <label>Full Name</label>
-            <input type="text" value="<?php echo htmlspecialchars($user['full_name']); ?>" disabled>
+            <input type="text" value="<?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?>" disabled>
             <label>Email</label>
             <input type="email" value="<?php echo htmlspecialchars($user['email']); ?>" disabled>
-            <label>Mobile</label>
-            <input type="text" value="<?php echo htmlspecialchars($user['country_code'] . ' ' . $user['mobile']); ?>" disabled>
+            <label>Phone</label>
+            <input type="text" value="<?php echo htmlspecialchars($user['phone_number']); ?>" disabled>
 
-            <h3>Shipping Address *</h3>
-            <label>House Number *</label>
+            <h3>Shipping Address</h3>
+            <label>House No *</label>
             <input type="text" name="house_no" required>
             <label>Street 1 *</label>
             <input type="text" name="street1" required>
@@ -134,6 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <label>Payment Method *</label>
             <select name="payment_method" required>
+                <option value="">-- Select Payment Method --</option>
                 <option value="Cash on Delivery">Cash on Delivery</option>
                 <option value="Card Payment">Card Payment</option>
             </select>
@@ -144,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="order-summary">
         <h2>Order Summary</h2>
-        <img src="../../../assets/images/<?php echo $product['image_id']; ?>.png" alt="<?php echo htmlspecialchars($product['product_name']); ?>">
+        <img src="../../../assets/products/<?php echo $product['product_id']; ?>.png" alt="<?php echo htmlspecialchars($product['product_name']); ?>">
         <p><?php echo htmlspecialchars($product['product_name']); ?></p>
         <p>Price: $<?php echo number_format($product['price'], 2); ?></p>
         <p>Quantity: <?php echo $quantity; ?></p>
