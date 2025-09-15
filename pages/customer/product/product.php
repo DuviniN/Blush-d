@@ -9,7 +9,7 @@ require_once "../../../server/config/db.php";
 
 // Validate product ID
 if(!isset($_GET['id']) || !is_numeric($_GET['id'])){
-    header("Location: dashboard.php");
+    header("Location: ../dashboard/dashboard.php?cat=All");
     exit();
 }
 
@@ -47,10 +47,12 @@ $related_result = $stmt_related->get_result();
 <title><?php echo htmlspecialchars($product['product_name']); ?> | Blush’d Cosmetics</title>
 <link rel="stylesheet" href="dashboard.css">
 <link rel="stylesheet" href="product.css">
+<link rel="stylesheet" href="../review/styles.css">
 </head>
 <body>
 
-<?php include "navbar.php"; ?>
+<!-- ✅ Use header instead of navbar -->
+<?php include_once "../header/header.php"; ?>
 
 <div class="product-detail">
   <div class="product-image">
@@ -105,7 +107,7 @@ $related_result = $stmt_related->get_result();
         <?php while($related = $related_result->fetch_assoc()): ?>
         <div class="product-card">
             <a href="product.php?id=<?php echo $related['product_id']; ?>">
-                <img src="../../../assets/products/<?php echo htmlspecialchars($row['product_id'] ?? 'default');  ?>.png" 
+                <img src="../../../assets/products/<?php echo htmlspecialchars($related['product_id'] ?? 'default'); ?>.png" 
                      alt="<?php echo htmlspecialchars($related['product_name']); ?>">
                 <p class="product-name"><?php echo htmlspecialchars($related['product_name']); ?></p>
                 <p class="product-price">$<?php echo number_format($related['price'], 2); ?></p>
@@ -116,6 +118,7 @@ $related_result = $stmt_related->get_result();
 </div>
 <?php endif; ?>
 
+<!-- Scripts -->
 <script>
 // Tabs Switching
 const tabButtons = document.querySelectorAll('.tab-button');
@@ -143,5 +146,8 @@ function handleBuyNow(productID, stock) {
     window.location.href = '../buy_now/buy_now.php?id='+productID+'&qty='+qty;
 }
 </script>
+
+<script src="../review/script.js" defer></script>
+
 </body>
 </html>
