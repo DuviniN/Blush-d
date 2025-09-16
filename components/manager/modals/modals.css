@@ -119,22 +119,6 @@
     grid-column: 1 / -1;
 }
 
-/* Simple Product Display */
-.simple-product-display {
-    margin-bottom: 20px;
-    padding: 15px;
-    background: #f8fafc;
-    border-radius: 8px;
-    border-left: 4px solid #ec4899;
-}
-
-.product-name-display {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin-top: 5px;
-}
-
 .form-label {
     font-size: 0.9rem;
     font-weight: 600;
@@ -160,8 +144,6 @@
     color: #374151;
     background: white;
     transition: all 0.3s ease;
-    width: 100%;
-    box-sizing: border-box;
 }
 
 .form-input:focus,
@@ -407,27 +389,41 @@
 }
 
 /* Password Specific Styles */
+.security-notice {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 1px solid #f59e0b;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    display: flex;
+    gap: 15px;
+}
+
+.notice-icon {
+    color: #d97706;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.notice-content h4 {
+    margin: 0 0 10px 0;
+    color: #92400e;
+    font-weight: 700;
+}
+
+.notice-content ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #92400e;
+}
+
+.notice-content li {
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+}
+
 .password-input-container {
     position: relative;
-    width: 100%;
-}
-
-.password-input-container input {
-    padding-right: 45px; /* Make room for the toggle button */
-}
-
-/* Ensure password and text inputs look the same */
-.password-input-container input[type="password"],
-.password-input-container input[type="text"] {
-    font-family: inherit;
-    letter-spacing: normal;
-    -webkit-text-security: none;
-}
-
-/* Force text to be visible when type is text */
-.password-input-container input[type="text"] {
-    -webkit-text-security: none !important;
-    font-family: inherit !important;
 }
 
 .password-toggle {
@@ -441,95 +437,10 @@
     cursor: pointer;
     font-size: 16px;
     transition: color 0.3s ease;
-    z-index: 10;
-    padding: 4px;
 }
 
 .password-toggle:hover {
     color: #ec4899;
-}
-
-/* Password Requirements Text */
-.password-requirements-text {
-    margin-top: 8px;
-}
-
-.requirements-hint {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.75rem;
-    color: #6b7280;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-.requirements-hint i {
-    color: #ec4899;
-    font-size: 0.7rem;
-}
-
-.requirements-list {
-    margin: 0;
-    padding-left: 16px;
-    list-style: none;
-    position: relative;
-}
-
-.requirements-list li {
-    font-size: 0.7rem;
-    color: #64748b;
-    margin-bottom: 2px;
-    position: relative;
-    padding-left: 8px;
-}
-
-.requirements-list li::before {
-    content: "•";
-    color: #ec4899;
-    font-weight: bold;
-    position: absolute;
-    left: -8px;
-}
-
-/* Live Password Requirements */
-.password-requirements-live {
-    margin-top: 10px;
-    padding: 12px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-}
-
-.password-requirements-live .requirement-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 6px;
-}
-
-.password-requirements-live .requirement-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.75rem;
-    color: #64748b;
-    padding: 2px 0;
-}
-
-.password-requirements-live .requirement-icon {
-    width: 12px;
-    height: 12px;
-    font-size: 0.65rem;
-    color: #ef4444;
-    transition: color 0.3s ease;
-}
-
-.password-requirements-live .requirement-item.valid .requirement-icon {
-    color: #10b981;
-}
-
-.password-requirements-live .requirement-item.valid {
-    color: #059669;
 }
 
 .password-strength {
@@ -569,7 +480,47 @@
     color: #ef4444;
 }
 
-/* Removed old security notice and password requirements styles */
+.password-requirements {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.password-requirements h4 {
+    margin: 0 0 15px 0;
+    color: #374151;
+    font-size: 1rem;
+}
+
+.requirement-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.requirement-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.requirement-icon {
+    width: 16px;
+    color: #ef4444;
+    transition: color 0.3s ease;
+}
+
+.requirement-item.valid .requirement-icon {
+    color: #10b981;
+}
+
+.requirement-item.valid {
+    color: #10b981;
+}
 
 /* Loading Spinner Styles */
 .loading-spinner {
@@ -607,176 +558,12 @@
         flex-direction: column;
     }
     
+    .security-notice {
+        flex-direction: column;
+        text-align: center;
+    }
+    
     .product-info-content {
         grid-template-columns: 1fr;
     }
-    
-    .password-requirements-live .requirement-list {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 4px;
-    }
-    
-    .requirements-hint {
-        font-size: 0.7rem;
-    }
-    
-    .requirements-list li {
-        font-size: 0.65rem;
-    }
-}
-
-/* Password Management Styles */
-.password-input-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.password-toggle {
-    position: absolute;
-    right: 12px;
-    background: none;
-    border: none;
-    color: #6b7280;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-    z-index: 2;
-}
-
-.password-toggle:hover {
-    color: #ec4899;
-    background: rgba(236, 72, 153, 0.1);
-}
-
-.password-strength {
-    margin-top: 12px;
-    padding: 12px;
-    background: #f9fafb;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-}
-
-.strength-bar {
-    height: 6px;
-    background: #e5e7eb;
-    border-radius: 3px;
-    overflow: hidden;
-    margin-bottom: 8px;
-}
-
-.strength-fill {
-    height: 100%;
-    border-radius: 3px;
-    transition: all 0.3s ease;
-    width: 0%;
-}
-
-.strength-text {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #6b7280;
-    text-align: center;
-}
-
-.password-requirements-live {
-    margin-top: 12px;
-    padding: 12px;
-    background: #f9fafb;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-}
-
-.requirements-header {
-    margin-bottom: 8px;
-}
-
-.requirements-hint {
-    color: #6b7280;
-    font-size: 0.8rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.requirement-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 8px;
-}
-
-.requirement-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.8rem;
-    color: #6b7280;
-    transition: all 0.2s ease;
-}
-
-.requirement-item.valid {
-    color: #10b981;
-}
-
-.requirement-item.invalid {
-    color: #dc2626;
-}
-
-.requirement-icon {
-    font-size: 0.75rem;
-    width: 12px;
-    text-align: center;
-}
-
-.password-match {
-    margin-top: 8px;
-}
-
-.match-indicator {
-    font-size: 0.875rem;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.match-indicator.success {
-    color: #10b981;
-}
-
-.match-indicator.error {
-    color: #dc2626;
-}
-
-/* Password Requirements Text (Static) */
-.password-requirements-text {
-    margin-top: 8px;
-    padding: 8px 12px;
-    background: #f3f4f6;
-    border-radius: 6px;
-    border-left: 3px solid #ec4899;
-}
-
-.requirements-list {
-    list-style: none;
-    padding: 0;
-    margin: 4px 0 0 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 4px;
-}
-
-.requirements-list li {
-    font-size: 0.75rem;
-    color: #6b7280;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.requirements-list li::before {
-    content: '•';
-    color: #ec4899;
-    font-weight: bold;
 }

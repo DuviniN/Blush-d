@@ -47,6 +47,12 @@ CREATE TABLE `Order` ( -- Using backticks because Order is a reserved keyword in
   order_date DATETIME NOT NULL,
   total_price DECIMAL(10, 2) NOT NULL,
   user_id INT,
+  house_no VARCHAR(50) NOT NULL,
+  street1 VARCHAR(225) NOT NULL,
+  street2 VARCHAR(225) DEFAULT NULL,
+  city VARCHAR(100) NOT NULL,
+  postal_code VARCHAR(20) NOT NULL,
+  payment_method VARCHAR(50) NOT NULL,
   FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
 );
 

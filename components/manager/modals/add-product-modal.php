@@ -5,7 +5,7 @@
             <h2><i class="fas fa-plus-circle"></i> Add New Product</h2>
         </div>
         <div class="modal-body">
-            <form id="addProductForm" class="modal-form">
+            <form id="addProductForm" class="modal-form" enctype="multipart/form-data">
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">

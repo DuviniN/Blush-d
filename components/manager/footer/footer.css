@@ -8,15 +8,7 @@
     overflow: hidden;
 }
 
-.manager-footer::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #ec4899, #f472b6, #fbbf24);
-}
+
 
 .footer-content {
     display: flex;

@@ -163,6 +163,15 @@ class ModalManager {
             if (result.success) {
                 this.showNotification('Product added successfully!', 'success');
                 this.closeModal('addProductModal');
+
+                //Reset form and clear image preview
+                document.getElementById('addProductForm').reset();
+                this.clearValidationErrors(document.getElementById('addProductForm'));
+
+                const imagePreview = document.getElementById('productImagePreview');
+                if(imagePreview){
+                    imagePreview.style.display = 'none';
+                }
                 
                 // Refresh dashboard if available
                 if (window.dashboardManager) {

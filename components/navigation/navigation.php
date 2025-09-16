@@ -1,20 +1,17 @@
 <?php
-// navigation.php - reusable navigation bar
+// navigation.php - Simple BLUSH-D Navigation
 ?>
-<nav>
-    <div class="nav-left">
-        <h1>BLUSH-D</h1>
-    </div>
-            
-    <div class="nav-center">
-        <a href="index.php">
-        <img src="./assets/pictures/download.png" alt="Logo" class="logo">
-        </a>
-    </div>
-            
-    <div class="nav-right">
-        <a href="index.php">Home</a>
-        <a href="../Pages/login/login.php">Login</a>
-        <a href="../Pages/register/register.php">Register</a>
-    </div>
-</nav>
+<header class="main-navigation">
+    <nav class="nav-container">
+        <!-- Company Brand -->
+        <div class="brand-section">
+            <h1 class="company-name">BLUSH-D</h1>
+        </div>
+
+        <!-- Auth Buttons -->
+        <div class="auth-buttons">
+            <a href="./pages/login/" class="btn-login">Login</a>
+            <a href="./pages/register/" class="btn-register">Register</a>
+        </div>
+    </nav>
+</header>
