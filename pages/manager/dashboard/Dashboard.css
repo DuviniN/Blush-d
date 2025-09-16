@@ -1,0 +1,110 @@
+/* Dashboard Main Styles - Cleaned Version */
+
+/* ===============================================
+   GLOBAL RESET AND BASE STYLES
+   =============================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #fcf9fb 0%, #fce7f3 100%);
+    min-height: 100vh;
+    color: #374151;
+    margin: 0;
+    padding: 0;
+}
+
+/* ===============================================
+   MAIN LAYOUT CONTAINER
+   =============================================== */
+.container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #ffffff;
+}
+
+/* ===============================================
+   MAIN CONTENT AREA
+   =============================================== */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 30px;
+    transition: margin-left 0.3s ease;
+    position: relative;
+    z-index: 1;
+    overflow-x: hidden;
+}
+
+/* ===============================================
+   SECTION BASE STYLES
+   =============================================== */
+.section {
+    padding: 0;
+    min-height: auto;
+    max-width: 100%;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* ===============================================
+   UTILITY CLASSES
+   =============================================== */
+.avatar-link {
+    text-decoration: none;
+    cursor: pointer;
+    transition: box-shadow 0.2s, background 0.2s;
+}
+
+.avatar-link:hover {
+    box-shadow: 0 0 0 4px #FFD70044;
+    background: #FFD700;
+    color: #181c24;
+}
+
+/* ===============================================
+   RESPONSIVE DESIGN
+   =============================================== */
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        padding: 20px 15px;
+        padding-bottom: 80px;
+    }
+    
+    .container {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+    .main-content {
+        padding: 25px 20px;
+        padding-bottom: 80px;
+    }
+}
+
+/* ===============================================
+   FOOTER POSITIONING
+   =============================================== */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 280px;
+    right: 0;
+    z-index: 50;
+    transition: left 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .footer {
+        left: 0;
+        right: 0;
+    }
+}
