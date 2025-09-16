@@ -34,7 +34,7 @@ $stmt->close();
 // Handle POST (update)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
-    $category = trim($_POST['category_id'] ?? '');
+    $category = (int)($_POST['category_id'] ?? '');
     $price = $_POST['price'] ?? '';
     $stock = $_POST['stock'] ?? '';
 
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$update) {
             $errors[] = "Prepare failed: " . $mysqli->error;
         } else {
-            $update->bind_param("ssdii", $name, $category, $price, $stock, $id);
+            $update->bind_param("sidii", $name, $category, $price, $stock, $id);
             if ($update->execute()) {
                 header("Location: manage_products.php?msg=" . urlencode("Product updated successfully"));
                 exit();
@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     <?php endif; ?>
 
-    <form method="POST" action="edit_product.php?id=<?php echo $id; ?>">
+    <form method="POST" action="/Blush-d/pages/admin/pages/products.php?id=<?php echo $id; ?>">
         <label>Product Name:</label>
         <input type="text" name="name" value="<?php echo htmlspecialchars($product['name']); ?>" required>
 
@@ -98,8 +98,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="buttons">
             <button type="submit">Update</button>
-            <a href="product.php" class="btn-cancel">Cancel</a>
+            <a href="products.php" class="btn-cancel">Cancel</a>
         </div>
     </form>
+    <script src="/Blush-d/pages/admin/assets/js/edit_product.js"></script>
 </body>
 </html>
