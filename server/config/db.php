@@ -1,10 +1,12 @@
 <?php
-$host = "localhost";   
-$user = "root";        
-$pass = "";            
-$db   = "cosmetic_db";       
 
-$conn = new mysqli($host, $user, $pass, $db);
+$host = "localhost";
+$username = "root";
+$password = "";
+$database = "blush_d";
+
+// Create connection
+$conn = new mysqli($host, $username, $password, $database);
 
 // Check connection
 if ($conn->connect_error) {
