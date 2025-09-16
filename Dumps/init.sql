@@ -17,7 +17,6 @@ CREATE TABLE User (
   last_name VARCHAR(100) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL, -- In a real application, this should be a hashed password.
-  address VARCHAR(255),
   phone_number VARCHAR(20),
   role VARCHAR(50) DEFAULT 'CUSTOMER'  -- Added role field to distinguish user types (e.g., admin, customer)
 );
@@ -30,10 +29,14 @@ CREATE TABLE User (
 CREATE TABLE Product (
   product_id INT PRIMARY KEY AUTO_INCREMENT,
   product_name VARCHAR(255) NOT NULL, -- Added a name field, which is essential for a product.
-  description TEXT,
+  description TEXT NOT NULL,
   price DECIMAL(10, 2) NOT NULL,
   stock INT NOT NULL,
   category_id INT,
+  img_id INT(100) DEFAULT NULL,
+  ingredients TEXT DEFAULT NULL,
+  mini_description VARCHAR(225) DEFAULT NULL,
+  img_src VARCHAR(255) DEFAULT NULL,
   FOREIGN KEY (category_id) REFERENCES Category(category_id) ON DELETE SET NULL
 );
 
