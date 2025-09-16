@@ -143,14 +143,12 @@ class ProfileManager {
         }
 
         // Populate personal information fields
-        const personalFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'birthDate'];
+        const personalFields = ['firstName', 'lastName', 'email', 'phone'];
         const personalMapping = {
             firstName: profile.first_name,
             lastName: profile.last_name,
             email: profile.email,
-            phone: profile.phone_number,
-            address: profile.address,
-            birthDate: profile.birth_day
+            phone: profile.phone_number
         };
 
         personalFields.forEach(fieldId => {
@@ -283,7 +281,7 @@ class ProfileManager {
 
     enableEdit(section) {
         const sectionMap = {
-            'personal': ['firstName', 'lastName', 'email', 'phone', 'address', 'birthDate']
+            'personal': ['firstName', 'lastName', 'email', 'phone']
         };
 
         const fields = sectionMap[section];
@@ -327,7 +325,7 @@ class ProfileManager {
         }
 
         const sectionMap = {
-            'personal': ['firstName', 'lastName', 'email', 'phone', 'address', 'birthDate']
+            'personal': ['firstName', 'lastName', 'email', 'phone']
         };
 
         const fields = sectionMap[section];
@@ -350,9 +348,7 @@ class ProfileManager {
                         firstName: 'first_name',
                         lastName: 'last_name',
                         email: 'email',
-                        phone: 'phone_number',
-                        address: 'address',
-                        birthDate: 'birth_day'
+                        phone: 'phone_number'
                     };
                     
                     const fieldValue = field.value.trim();
@@ -436,7 +432,7 @@ class ProfileManager {
 
     cancelEdit(section) {
         const sectionMap = {
-            'personal': ['firstName', 'lastName', 'email', 'phone', 'address', 'birthDate']
+            'personal': ['firstName', 'lastName', 'email', 'phone']
         };
 
         const fields = sectionMap[section];

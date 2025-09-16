@@ -79,18 +79,8 @@
                                 </label>
                                 <input type="tel" id="phone" class="profile-form-input" placeholder="+1 (555) 123-4567" readonly>
                             </div>
-                            <div class="profile-form-group">
-                                <label class="profile-form-label">
-                                    <i class="fas fa-map"></i> Address
-                                </label>
-                                <input type="text" id="address" class="profile-form-input" placeholder="123 Main St, City, State" readonly>
-                            </div>
-                            <div class="profile-form-group">
-                                <label class="profile-form-label">
-                                    <i class="fas fa-calendar"></i> Birth Date
-                                </label>
-                                <input type="date" id="birthDate" class="profile-form-input" placeholder="1990-01-01" readonly>
-                            </div>
+                            
+                           
                         </div>
                         <div class="profile-actions" id="personalActions" style="display: none;">
                             <button class="profile-btn profile-btn-primary" data-save-section="personal">

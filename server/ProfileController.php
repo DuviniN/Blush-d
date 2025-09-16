@@ -63,8 +63,8 @@ class ProfileController extends BaseController {
             $this->sendResponse(false, 'No session found', null, 401);
             return;
         }
-        
-        $sql = "SELECT user_id, first_name, last_name, email, address, phone_number, role, department, birth_day, start_day 
+
+        $sql = "SELECT user_id, first_name, last_name, email, phone_number, role, department, start_day 
                 FROM User WHERE user_id = ? AND role = 'MANAGER'";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("i", $user_id);
@@ -82,7 +82,7 @@ class ProfileController extends BaseController {
     }
     
     private function getUserProfile($user_id) {
-        $sql = "SELECT user_id, first_name, last_name, email, address, phone_number, role, department, birth_day, start_day 
+        $sql = "SELECT user_id, first_name, last_name, email,  phone_number, role, department, start_day 
                 FROM User WHERE user_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("i", $user_id);
@@ -126,16 +126,15 @@ class ProfileController extends BaseController {
             return;
         }
 
-        $sql = "UPDATE User SET first_name = ?, last_name = ?, email = ?, address = ?, phone_number = ?, birth_day = ? 
+        $sql = "UPDATE User SET first_name = ?, last_name = ?, email = ?, phone_number = ?
                 WHERE user_id = ? AND role = 'MANAGER'";
         $stmt = $this->conn->prepare($sql);
         
-        $address = isset($data['address']) && $data['address'] !== '' ? $data['address'] : null;
+        
         $phone = isset($data['phone_number']) && $data['phone_number'] !== '' ? $data['phone_number'] : null;
-        $birth_day = isset($data['birth_day']) && $data['birth_day'] !== '' ? $data['birth_day'] : null;
-        
-        $stmt->bind_param("ssssssi", $data['first_name'], $data['last_name'], $data['email'], $address, $phone, $birth_day, $user_id);
-        
+
+        $stmt->bind_param("ssssi", $data['first_name'], $data['last_name'], $data['email'], $phone, $user_id);
+
         if ($stmt->execute()) {
             $affected_rows = $stmt->affected_rows;
             
@@ -160,13 +159,12 @@ class ProfileController extends BaseController {
             }
         }
         
-        $sql = "UPDATE User SET first_name = ?, last_name = ?, email = ?, address = ?, phone_number = ?, role = ? WHERE user_id = ?";
+        $sql = "UPDATE User SET first_name = ?, last_name = ?, email = ?,  phone_number = ?, role = ? WHERE user_id = ?";
         $stmt = $this->conn->prepare($sql);
-        $address = $data['address'] ?? '';
         $phone = $data['phone_number'] ?? '';
         $role = $data['role'] ?? 'CUSTOMER';
         
-        $stmt->bind_param("ssssssi", $data['first_name'], $data['last_name'], $data['email'], $address, $phone, $role, $data['user_id']);
+        $stmt->bind_param("ssssi", $data['first_name'], $data['last_name'], $data['email'], $phone, $role, $data['user_id']);
         
         if ($stmt->execute()) {
             $this->sendResponse(true, 'User updated successfully');
