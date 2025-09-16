@@ -7,7 +7,6 @@ if(!isset($_SESSION['user_id'])){
 
 require_once "../../../server/config/db.php";
 
-// Validate product ID
 if(!isset($_GET['id']) || !is_numeric($_GET['id'])){
     header("Location: dashboard.php");
     exit();
@@ -15,9 +14,7 @@ if(!isset($_GET['id']) || !is_numeric($_GET['id'])){
 
 $productID = intval($_GET['id']);
 
-// Fetch product details
-$sql = "SELECT p.*, c.name AS category_name
-        FROM Products p
+$sql = "SELECT p.*, c.name AS category_name FROM Products p
         LEFT JOIN Category c ON p.category_id = c.category_id
         WHERE p.product_id = ?";
 $stmt = $conn->prepare($sql);
@@ -26,12 +23,8 @@ $stmt->execute();
 $result = $stmt->get_result();
 $product = $result->fetch_assoc();
 
-if(!$product){
-    echo "<h2>Product not found!</h2>";
-    exit();
-}
+if(!$product){ echo "<h2>Product not found!</h2>"; exit(); }
 
-// Fetch related products
 $sql_related = "SELECT * FROM Products WHERE category_id = ? AND product_id != ? LIMIT 4";
 $stmt_related = $conn->prepare($sql_related);
 $stmt_related->bind_param("ii", $product['category_id'], $productID);
@@ -79,18 +72,18 @@ $related_result = $stmt_related->get_result();
             <p>Customer reviews will be shown here.</p>
         </div>
 
-        <p class="price">$<?php echo number_format($product['price'], 2); ?></p>
+        <p class="price">Rs. <?php echo number_format($product['price'], 2); ?></p>
         <p class="stock <?php echo ($product['stock'] > 0) ? 'in-stock' : 'out-of-stock'; ?>">
             <?php echo ($product['stock'] > 0) ? "In Stock" : "Out of Stock"; ?>
         </p>
 
-        <div class="quantity">
-            <label for="quantity">Qty:</label>
-            <input type="number" id="quantity" name="quantity" value="1" min="1" max="<?php echo $product['stock']; ?>">
+        <div class="quantity-wrapper">
+            <label>Qty:</label>
+            <input type="number" id="quantity" value="1" min="1" max="<?php echo $product['stock']; ?>">
         </div>
 
-        <div class="actions">
-            <button class="btn add-to-cart" onclick="handleAddToCart(<?php echo $product['stock']; ?>)">Add to Cart</button>
+        <div class="button-wrapper">
+            <button class="btn add-to-cart" onclick="addToCart(<?php echo $product['product_id']; ?>)">Add to Cart</button>
             <button class="btn buy-now" onclick="handleBuyNow(<?php echo $product['product_id']; ?>, <?php echo $product['stock']; ?>)">Buy Now</button>
         </div>
     </div>
@@ -105,16 +98,19 @@ $related_result = $stmt_related->get_result();
         <?php while($related = $related_result->fetch_assoc()): ?>
         <div class="product-card">
             <a href="product.php?id=<?php echo $related['product_id']; ?>">
-                <img src="../../../assets/products/<?php echo htmlspecialchars($row['product_id'] ?? 'default');  ?>.png" 
+                <img src="../../../assets/products/<?php echo htmlspecialchars($related['product_id'] ?? 'default'); ?>.png" 
                      alt="<?php echo htmlspecialchars($related['product_name']); ?>">
                 <p class="product-name"><?php echo htmlspecialchars($related['product_name']); ?></p>
-                <p class="product-price">$<?php echo number_format($related['price'], 2); ?></p>
+                <p class="product-price">Rs. <?php echo number_format($related['price'], 2); ?></p>
             </a>
         </div>
         <?php endwhile; ?>
     </div>
 </div>
 <?php endif; ?>
+
+<!-- Top-right notification -->
+<div id="notification" class="notification"></div>
 
 <script>
 // Tabs Switching
@@ -129,19 +125,41 @@ tabButtons.forEach(btn => {
     });
 });
 
-// Add to Cart & Buy Now
-function handleAddToCart(stock) {
+// Buy Now redirect
+function handleBuyNow(productID, stock){
     const qty = parseInt(document.getElementById('quantity').value);
-    if (stock <= 0) { alert("Out of stock."); return; }
-    if (qty > stock) { alert(`Only ${stock} items available.`); return; }
-    alert("Product added to cart!");
-}
-function handleBuyNow(productID, stock) {
-    const qty = parseInt(document.getElementById('quantity').value);
-    if (stock <= 0) { alert("Out of stock."); return; }
-    if (qty > stock) { alert(`Only ${stock} items available.`); return; }
+    if(stock <= 0){ alert("Out of stock."); return; }
+    if(qty > stock){ alert(`Only ${stock} items available.`); return; }
     window.location.href = '../buy_now/buy_now.php?id='+productID+'&qty='+qty;
 }
+
+// Add to Cart via AJAX
+function addToCart(productID){
+    const qty = parseInt(document.getElementById('quantity').value);
+    if(qty < 1){ alert("Quantity must be at least 1"); return; }
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "../cart/add_to_cart.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onload = function(){
+        if(this.status === 200){
+            showNotification("Product added to cart!");
+        } else {
+            showNotification("Failed to add product.", true);
+        }
+    };
+    xhr.send("product_id=" + productID + "&quantity=" + qty);
+}
+
+// Notification display
+function showNotification(msg, error = false){
+    const notification = document.getElementById("notification");
+    notification.textContent = msg;
+    notification.style.backgroundColor = error ? "#dc3545" : "#4CAF50";
+    notification.classList.add("show");
+    setTimeout(()=>{ notification.classList.remove("show"); }, 3000);
+}
 </script>
+
 </body>
 </html>
