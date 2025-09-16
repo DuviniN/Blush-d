@@ -41,7 +41,10 @@ $result = $stmt->get_result();
 <body>
 
 <!-- Navigation -->
-<nav class="navbar">
+ <?php include "../header/header.php"; ?>
+<link rel="stylesheet" href="../header/header.css">
+
+<!-- <nav class="navbar">
   <div class="logo">Blush’d Cosmetics</div>
   <ul class="nav-links">
     <li><a href="dashboard.php?cat=All" class="<?php echo ($category==='All') ? 'active' : ''; ?>">All</a></li>
@@ -54,7 +57,7 @@ $result = $stmt->get_result();
     <span><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
     <a href="../logout.php" class="logout-btn">Logout</a>
   </div>
-</nav>
+</nav> -->
 
 <h1>Welcome, <?php echo htmlspecialchars($_SESSION['user_name']); ?>!</h1>
 <p>

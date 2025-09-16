@@ -1,0 +1,107 @@
+/* Reviews UI styling (keep this file in review/styles.css) */
+
+.reviews-aggregate {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.avg-rating {
+  font-size: 32px;
+  font-weight: 700;
+}
+.star-display {
+  font-size: 18px;
+}
+.reviews-list {
+  margin-bottom: 16px;
+}
+.review-item {
+  border-bottom: 1px solid #eaeaea;
+  padding: 10px 0;
+}
+.review-user {
+  font-weight: 600;
+}
+.review-stars .star-icon {
+  font-size: 16px;
+  margin-right: 4px;
+}
+.review-date {
+  font-size: 12px;
+  color: #666;
+}
+.review-comments {
+  margin-top: 6px;
+  white-space: pre-wrap;
+}
+
+/* Form */
+.review-form-wrapper {
+  margin-top: 18px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #fafafa;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+#reviewForm textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  margin-top: 8px;
+  resize: vertical;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  min-height: 80px;
+}
+#reviewForm .btn {
+  margin-top: 8px;
+  padding: 8px 14px;
+  border: none;
+  background: #ff6b8a;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+#reviewForm .btn:hover {
+  opacity: 0.95;
+}
+
+.star-input {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.star-input .star {
+  cursor: pointer;
+  font-size: 22px;
+  user-select: none;
+}
+.star-input .star.on {
+  color: #ffb347;
+} /* filled color */
+.star-icon.filled {
+  color: #ffb347;
+}
+.star-icon {
+  color: #ccc;
+}
+
+/* tiny messages */
+.review-message {
+  margin-top: 8px;
+  font-size: 14px;
+}
+.review-success {
+  color: green;
+}
+.review-error {
+  color: #c0392b;
+}
+
+/* responsive */
+@media (max-width: 600px) {
+  .avg-rating {
+    font-size: 24px;
+  }
+}
