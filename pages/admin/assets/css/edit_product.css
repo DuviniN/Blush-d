@@ -1,0 +1,108 @@
+/* ===== General Layout ===== */
+body {
+  font-family: Arial, sans-serif;
+  background: #f9f9fb;
+  margin: 0;
+  padding: 20px;
+  color: #333;
+}
+
+.container {
+  max-width: 600px;
+  margin: 30px auto;
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #ff4081;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* ===== Error Messages ===== */
+.errors {
+  background: #ffebee;
+  color: #c62828;
+  padding: 12px 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border: 1px solid #ef9a9a;
+}
+
+.errors ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+/* ===== Form Styles ===== */
+form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 18px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border 0.2s;
+}
+
+form input:focus {
+  border-color: #ff4081;
+  outline: none;
+  box-shadow: 0 0 3px rgba(255, 64, 129, 0.3);
+}
+
+/* ===== Buttons ===== */
+form button {
+  background: #ff4081;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-right: 10px;
+  /* transition: background 0.2s; */
+}
+
+form button:hover {
+  background: #e73370;
+}
+
+form a {
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  transition: all 0.2s;
+}
+
+form a:hover {
+  background: #f2f2f2;
+  border-color: #aaa;
+}
+/* Input error style */
+input.error {
+  border-color: #e53935 !important;
+  box-shadow: 0 0 4px rgba(229, 57, 53, 0.4);
+}
+
+.error-message {
+  color: #e53935;
+  font-size: 13px;
+  margin-top: -12px;
+  margin-bottom: 12px;
+}
+
