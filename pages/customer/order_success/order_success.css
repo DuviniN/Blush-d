@@ -1,0 +1,69 @@
+.success-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 20px;
+    background: #fdfdfd;
+    min-height: 80vh;
+}
+
+.success-card {
+    background: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+}
+
+.success-icon {
+    width: 80px;
+    margin-bottom: 20px;
+}
+
+.success-card h1 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 16px;
+    color: #777;
+    margin-bottom: 30px;
+}
+
+.order-info {
+    text-align: left;
+    margin-bottom: 30px;
+}
+
+.order-info h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.order-info p {
+    font-size: 15px;
+    margin: 5px 0;
+    color: #555;
+}
+
+.actions .btn {
+    display: inline-block;
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    background: #e75480;
+    /* pinkish theme */
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: 0.3s ease;
+}
+
+.actions .btn:hover {
+    background: #c7436b;
+}

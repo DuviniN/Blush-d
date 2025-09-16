@@ -1,11 +1,12 @@
 <?php
-$servername = "localhost";
+
+$host = "localhost";
 $username = "root";
 $password = "";
 $database = "blush_d";
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $database);
+$conn = new mysqli($host, $username, $password, $database);
 
 // Check connection
 if ($conn->connect_error) {
