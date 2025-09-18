@@ -158,7 +158,7 @@ class ReportsManager {
             tr.innerHTML = `
                 <td class="product-name">${row.product_name || 'N/A'}</td>
                 <td class="category-cell">${row.category || 'N/A'}</td>
-                <td class="price-cell">$${parseFloat(row.price || 0).toFixed(2)}</td>
+                <td class="price-cell">Rs.${parseFloat(row.price || 0).toFixed(2)}</td>
                 <td class="stock-cell" ${stockWarning}>${row.stock || 0}</td>
                 <td class="status-cell">
                     <span class="status ${statusClass}">${this.getStatusText(row.stock)}</span>

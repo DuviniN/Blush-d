@@ -3,7 +3,7 @@
 <div id="dashboard-section" class="section">
     <header class="header">
         <div class="welcome">
-            <h1>Welcome back, Duvini!</h1>
+            <h1>Welcome Back </h1>
             <p>Here's what's happening with your store today</p>
         </div>
     </header>
@@ -67,7 +67,7 @@
                     <i class="fas fa-dollar-sign"></i>
                 </div>
             </div>
-            <div class="stats-number">$197</div>
+            <div class="stats-number">Rs.197</div>
             <div class="stats-trend">
                 <i class="fas fa-arrow-up"></i> +15% from last month
             </div>
