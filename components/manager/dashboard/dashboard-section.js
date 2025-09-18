@@ -5,7 +5,7 @@ class DashboardManager {
             totalProducts: 0,
             lowStock: 0,
             totalOrders: 0,
-            revenue: '$0'
+            revenue: 'Rs.0'
         };
         this.charts = {};
         this.init();
@@ -89,7 +89,7 @@ class DashboardManager {
             const revenueResponse = await fetch('../../../server/api.php?endpoint=reports&action=monthly_revenue');
             const revenueData = await revenueResponse.json();
             if (revenueData.success) {
-                this.updateStatCard('revenue', '$' + parseFloat(revenueData.data.revenue || 0).toFixed(2));
+                this.updateStatCard('revenue', 'Rs.' + parseFloat(revenueData.data.revenue || 0).toFixed(2));
             }
 
         } catch (error) {
@@ -218,7 +218,7 @@ class DashboardManager {
             <div class="popular-product-info">
                 <div class="popular-product-name">${product.product_name}</div>
                 <div class="popular-product-stats">
-                    <div class="popular-product-revenue">$${parseFloat(product.revenue || 0).toFixed(2)}</div>
+                    <div class="popular-product-revenue">Rs.${parseFloat(product.revenue || 0).toFixed(2)}</div>
                     <div class="popular-product-sold">${product.total_sold || 0} sold</div>
                 </div>
             </div>
@@ -305,7 +305,7 @@ class DashboardManager {
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return context.label + ': $' + context.parsed.toFixed(2);
+                                    return context.label + ': Rs.' + context.parsed.toFixed(2);
                                 }
                             }
                         }
@@ -373,7 +373,7 @@ class DashboardManager {
                             beginAtZero: true,
                             ticks: {
                                 callback: function(value) {
-                                    return '$' + value;
+                                    return 'Rs.' + value;
                                 }
                             }
                         }

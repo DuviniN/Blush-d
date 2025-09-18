@@ -83,6 +83,8 @@ $result = $stmt->get_result();
         <button id="closeNotification">&times;</button>
     </div>
 
+    
+
     <script>
         // Notification
         const notification = document.getElementById('notification');
@@ -122,7 +124,9 @@ $result = $stmt->get_result();
             }, 1000);
         }
     </script>
+    
 
 </body>
+
 
 </html>
