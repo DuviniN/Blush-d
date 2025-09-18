@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     <?php endif; ?>
 
-    <form method="POST" action="product.php?id=<?php echo $id; ?>">
+    <form method="POST" action="edit_product.php?id=<?php echo $id; ?>">
         <label>Product Name:</label>
         <input type="text" name="name" value="<?php echo htmlspecialchars($product['product_name']); ?>" required>
 
