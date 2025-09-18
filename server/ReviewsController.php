@@ -3,11 +3,8 @@ require_once 'config/db.php';
 require_once 'BaseController.php';
 
 class ReviewsController extends BaseController {
-    public function handleRequest() {
-        
-        
+    public function handleRequest() { 
         $method = $_SERVER['REQUEST_METHOD'];
-        
         try {
             switch ($method) {
                 case 'GET':

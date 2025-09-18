@@ -23,11 +23,12 @@ $action = $_GET['action'] ?? '';
 
 try {
     switch ($endpoint) {
-        case 'reviews':
-            require_once 'ReviewsController.php';
-            $controller = new ReviewsController($conn);
+        case 'auth':
+            require_once 'AuthController.php';
+            $controller = new AuthController($conn);
             $controller->handleRequest();
             break;
+            
         case 'profile':
             require_once 'ProfileController.php';
             $controller = new ProfileController($conn);
@@ -61,6 +62,12 @@ try {
         case 'reports':
             require_once 'ReportController.php';
             $controller = new ReportController($conn);
+            $controller->handleRequest();
+            break;
+
+        case 'reviews':
+            require_once 'ReviewsController.php';
+            $controller = new ReviewsController($conn);
             $controller->handleRequest();
             break;
             

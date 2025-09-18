@@ -31,7 +31,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link" onclick="window.location.href='../../../index.php'">
+            <a href="#" class="nav-link logout-btn" id="logoutBtn">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Logout</span>
             </a>

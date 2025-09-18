@@ -12,8 +12,8 @@ if ($product_id <= 0) {
 
 // Fetch reviews with user name
 $sql = "SELECT r.review_id, r.rating, r.comments, r.review_date, u.first_name, u.last_name
-        FROM Review r
-        LEFT JOIN `User` u ON r.user_id = u.user_id
+        FROM review r
+        LEFT JOIN `user` u ON r.user_id = u.user_id
         WHERE r.product_id = ?
         ORDER BY r.review_date DESC";
 if ($stmt = $conn->prepare($sql)) {

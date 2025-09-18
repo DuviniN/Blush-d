@@ -1,197 +1,134 @@
+CREATE DATABASE  IF NOT EXISTS `blush_d_new`;
+USE `blush_d_new`;
 
--- Stores product categories.
--- -----------------------------------------------------
-CREATE TABLE Category (
-  category_id INT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(255) NOT NULL
-  
+
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
+  `user_id` int NOT NULL AUTO_INCREMENT,
+  `first_name` varchar(100) NOT NULL,
+  `last_name` varchar(100) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255)  NOT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `phone_number` varchar(20) DEFAULT NULL,
+  `role` varchar(50) DEFAULT 'CUSTOMER',
+  `department` varchar(100) DEFAULT NULL,
+  `birth_day` date DEFAULT NULL,
+  `start_day` date DEFAULT NULL,
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `email` (`email`)
 );
+INSERT INTO `user` VALUES 
+(1,'Jessica','Anderson','admin@example.com','$2y$10$OELhuUiwHcVxo./6Coo13OaVgcu5NxleVe9EzKV2nZhYgc92wNaw6','123 Hollywood Blvd, Los Angeles, CA','555-0101','ADMIN',NULL,NULL,'2017-04-15'),
+(2,'Olivia','Johnson','manager@example.com','$2y$10$Sz/Di9gZNsBrWxEhn7tzluWtun899awqghs2q8o3qas5kgwGJlS0m','456 Park Avenue, New York, NY','555-0102','MANAGER',NULL,NULL,'2018-07-22');
 
--- -----------------------------------------------------
--- Table `User`
--- Stores user account information.
--- -----------------------------------------------------
-CREATE TABLE User (
-  user_id INT PRIMARY KEY AUTO_INCREMENT,
-  first_name VARCHAR(100) NOT NULL,
-  last_name VARCHAR(100) NOT NULL,
-  email VARCHAR(255) NOT NULL UNIQUE,
-  password VARCHAR(255) NOT NULL, -- In a real application, this should be a hashed password.
-  phone_number VARCHAR(20),
-  role VARCHAR(50) DEFAULT 'CUSTOMER'  -- Added role field to distinguish user types (e.g., admin, customer)
+
+DROP TABLE IF EXISTS `category`;
+CREATE TABLE `category` (
+  `category_id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`category_id`)
 );
+INSERT INTO `category` VALUES 
+(1,'Skincare'),
+(2,'Makeup'),
+(3,'Haircare'),
+(4,'Tools');
 
--- -----------------------------------------------------
--- Table `Product`
--- Stores information about individual products.
--- It has a foreign key relationship with the Category table.
--- -----------------------------------------------------
-CREATE TABLE Product (
-  product_id INT PRIMARY KEY AUTO_INCREMENT,
-  product_name VARCHAR(255) NOT NULL, -- Added a name field, which is essential for a product.
-  description TEXT NOT NULL,
-  price DECIMAL(10, 2) NOT NULL,
-  stock INT NOT NULL,
-  category_id INT,
-  img_id INT(100) DEFAULT NULL,
-  ingredients TEXT DEFAULT NULL,
-  mini_description VARCHAR(225) DEFAULT NULL,
-  img_src VARCHAR(255) DEFAULT NULL,
-  FOREIGN KEY (category_id) REFERENCES Category(category_id) ON DELETE SET NULL
-);
 
--- -----------------------------------------------------
--- Table `Order`
--- Stores information about customer orders.
--- It has a foreign key relationship with the User table.
--- -----------------------------------------------------
-CREATE TABLE `Order` ( -- Using backticks because Order is a reserved keyword in SQL
-  order_id INT PRIMARY KEY AUTO_INCREMENT,
-  order_date DATETIME NOT NULL,
-  total_price DECIMAL(10, 2) NOT NULL,
-  user_id INT,
-  house_no VARCHAR(50) NOT NULL,
-  street1 VARCHAR(225) NOT NULL,
-  street2 VARCHAR(225) DEFAULT NULL,
-  city VARCHAR(100) NOT NULL,
-  postal_code VARCHAR(20) NOT NULL,
-  payment_method VARCHAR(50) NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
-);
-
--- -----------------------------------------------------
--- Table `Order_Item`
--- This is a junction table linking Orders and Products.
--- It stores details about each product within an order.
--- -----------------------------------------------------
-CREATE TABLE Order_Item (
-  order_item_id INT PRIMARY KEY AUTO_INCREMENT,
-  quantity INT NOT NULL,
-  price DECIMAL(10, 2) NOT NULL, -- Price per unit at the time of purchase
-  order_id INT,
-  product_id INT,
-  FOREIGN KEY (order_id) REFERENCES `Order`(order_id) ON DELETE CASCADE,
-  FOREIGN KEY (product_id) REFERENCES Product(product_id) ON DELETE SET NULL
-);
-
--- -----------------------------------------------------
--- Table `Payment`
--- Stores payment details for each order.
--- -----------------------------------------------------
-CREATE TABLE Payment (
-  payment_id INT PRIMARY KEY AUTO_INCREMENT,
-  payment_date DATETIME NOT NULL,
-  payment_method VARCHAR(100) NOT NULL,
-  amount DECIMAL(10, 2) NOT NULL,
-  order_id INT,
-  user_id INT,
-  FOREIGN KEY (user_id) REFERENCES User(user_id),
-  FOREIGN KEY (order_id) REFERENCES `Order`(order_id)
-);
-
--- -----------------------------------------------------
--- Table `Review`
--- Stores customer reviews for products.
--- -----------------------------------------------------
-CREATE TABLE Review (
-  review_id INT PRIMARY KEY AUTO_INCREMENT,
-  rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
-  comments TEXT,
-  review_date DATETIME NOT NULL,
-  user_id INT,
-  product_id INT,
-  FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
-  FOREIGN KEY (product_id) REFERENCES Product(product_id) ON DELETE CASCADE
-);
-
--- -----------------------------------------------------
--- Table `Cart`
--- Stores the items in a user's shopping cart.
--- Each row represents a product in a user's cart.
--- -----------------------------------------------------
-CREATE TABLE Cart (
-  cart_id INT PRIMARY KEY AUTO_INCREMENT,
-  user_id INT NOT NULL,
-  product_id INT NOT NULL,
-  quantity INT NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
-  FOREIGN KEY (product_id) REFERENCES Product(product_id) ON DELETE CASCADE
+DROP TABLE IF EXISTS `product`;
+CREATE TABLE `product` (
+  `product_id` int NOT NULL AUTO_INCREMENT,
+  `product_name` varchar(100) DEFAULT NULL,
+  `description` text,
+  `price` decimal(10,2) NOT NULL,
+  `stock` int NOT NULL,
+  `category_id` int DEFAULT NULL,
+  `image_id` int DEFAULT NULL,
+  `ingredients` text,
+  `mini_description` varchar(225) DEFAULT NULL,
+  `img_src` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`product_id`),
+  KEY `category_id` (`category_id`),
+  CONSTRAINT `product_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`) ON DELETE SET NULL
 );
 
 
+DROP TABLE IF EXISTS `cart`;
+CREATE TABLE `cart` (
+  `cart_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `product_id` int NOT NULL,
+  `quantity` int NOT NULL,
+  PRIMARY KEY (`cart_id`),
+  KEY `user_id` (`user_id`),
+  KEY `product_id` (`product_id`),
+  CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE,
+  CONSTRAINT `cart_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON DELETE CASCADE
+);
 
 
+DROP TABLE IF EXISTS `order`;
+CREATE TABLE `order` (
+  `order_id` int NOT NULL AUTO_INCREMENT,
+  `order_date` datetime NOT NULL,
+  `total_price` decimal(10,2) NOT NULL,
+  `user_id` int DEFAULT NULL,
+  `house_no` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `street1` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `street2` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `city` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `postal_code` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `payment_method` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  PRIMARY KEY (`order_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `order_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
+);
 
 
+DROP TABLE IF EXISTS `review`;
+CREATE TABLE `review` (
+  `review_id` int NOT NULL AUTO_INCREMENT,
+  `rating` int NOT NULL,
+  `comments` text,
+  `review_date` datetime NOT NULL,
+  `user_id` int DEFAULT NULL,
+  `product_id` int DEFAULT NULL,
+  PRIMARY KEY (`review_id`),
+  KEY `user_id` (`user_id`),
+  KEY `product_id` (`product_id`),
+  CONSTRAINT `review_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE,
+  CONSTRAINT `review_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON DELETE CASCADE,
+  CONSTRAINT `review_chk_1` CHECK (((`rating` >= 1) and (`rating` <= 5)))
+);
 
 
+DROP TABLE IF EXISTS `order_item`;
+CREATE TABLE `order_item` (
+  `order_item_id` int NOT NULL AUTO_INCREMENT,
+  `quantity` int NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `order_id` int DEFAULT NULL,
+  `product_id` int DEFAULT NULL,
+  PRIMARY KEY (`order_item_id`),
+  KEY `order_id` (`order_id`),
+  KEY `product_id` (`product_id`),
+  CONSTRAINT `order_item_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`) ON DELETE CASCADE,
+  CONSTRAINT `order_item_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON DELETE SET NULL
+);
 
 
-
-
-
-
-
--- Insert mock data for Category
-INSERT INTO Category (name) VALUES
-('Skincare'),
-('Makeup'),
-('Fragrances'),
-('Haircare'),
-('Bodycare');
-
--- Insert mock data for User
--- Insert mock data for User with role
-INSERT INTO User (first_name, last_name, email, password, address, phone_number, role) VALUES
-('Alice', 'Johnson', 'alice@example.com', 'hashed_pw1', '123 Main St, New York', '1234567890', 'CUSTOMER'),
-('Bob', 'Smith', 'bob@example.com', 'hashed_pw2', '456 Park Ave, Los Angeles', '2345678901', 'CUSTOMER'),
-('Charlie', 'Brown', 'charlie@example.com', 'hashed_pw3', '789 Elm St, Chicago', '3456789012', 'ADMIN'),
-('Diana', 'Williams', 'diana@example.com', 'hashed_pw4', '101 Maple Rd, Houston', '4567890123', 'MANAGER'),
-('Ethan', 'Taylor', 'ethan@example.com', 'hashed_pw5', '202 Pine St, Miami', '5678901234', 'CUSTOMER');
-
--- Insert mock data for Product
-INSERT INTO Product (name, description, price, stock, category_id) VALUES
-('Moisturizing Cream', 'Hydrating cream for dry skin.', 19.99, 50, 1),
-('Foundation', 'Liquid foundation for all-day coverage.', 25.50, 100, 2),
-('Perfume', 'Floral fragrance for women.', 49.99, 30, 3),
-('Shampoo', 'Herbal shampoo for smooth hair.', 12.75, 80, 4),
-('Body Lotion', 'Aloe vera body lotion.', 15.00, 60, 5);
-
--- Insert mock data for Order
-INSERT INTO `Order` (order_date, total_price, user_id) VALUES
-('2025-08-25 10:30:00', 45.49, 1),
-('2025-08-26 14:15:00', 49.99, 2),
-('2025-08-27 09:45:00', 38.75, 3),
-('2025-08-28 11:20:00', 62.99, 4);
-
--- Insert mock data for Order_Item
-INSERT INTO Order_Item (quantity, price, order_id, product_id) VALUES
-(2, 19.99, 1, 1), -- Alice bought 2 Moisturizing Cream
-(1, 25.50, 1, 2), -- Alice bought 1 Foundation
-(1, 49.99, 2, 3), -- Bob bought Perfume
-(1, 12.75, 3, 4), -- Charlie bought Shampoo
-(1, 25.50, 4, 2), -- Diana bought Foundation
-(1, 15.00, 4, 5); -- Diana bought Body Lotion
-
--- Insert mock data for Payment
-INSERT INTO Payment (payment_date, payment_method, amount, order_id, user_id) VALUES
-('2025-08-25 10:35:00', 'Credit Card', 45.49, 1, 1),
-('2025-08-26 14:20:00', 'PayPal', 49.99, 2, 2),
-('2025-08-27 09:50:00', 'Debit Card', 38.75, 3, 3),
-('2025-08-28 11:25:00', 'Credit Card', 62.99, 4, 4);
-
--- Insert mock data for Review
-INSERT INTO Review (rating, comments, review_date, user_id, product_id) VALUES
-(5, 'Excellent cream, my skin feels amazing!', '2025-08-26 12:00:00', 1, 1),
-(4, 'Good coverage foundation.', '2025-08-27 15:30:00', 1, 2),
-(3, 'The perfume is okay, a bit strong.', '2025-08-28 18:00:00', 2, 3),
-(5, 'Shampoo makes my hair silky smooth.', '2025-08-29 10:00:00', 3, 4),
-(4, 'Nice lotion, refreshing scent.', '2025-08-30 09:45:00', 4, 5);
-
--- Insert mock data for Cart
-INSERT INTO Cart (user_id, product_id, quantity) VALUES
-(1, 3, 1), -- Alice has Perfume in her cart
-(2, 4, 2), -- Bob has 2 Shampoos in his cart
-(3, 5, 1), -- Charlie has Body Lotion
-(5, 1, 1), -- Ethan has Moisturizing Cream
-(5, 2, 1); -- Ethan also has Foundation
+DROP TABLE IF EXISTS `payment`;
+CREATE TABLE `payment` (
+  `payment_id` int NOT NULL AUTO_INCREMENT,
+  `payment_date` datetime NOT NULL,
+  `payment_method` varchar(100) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `order_id` int DEFAULT NULL,
+  `user_id` int DEFAULT NULL,
+  PRIMARY KEY (`payment_id`),
+  KEY `user_id` (`user_id`),
+  KEY `order_id` (`order_id`),
+  CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
+  CONSTRAINT `payment_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`)
+);
