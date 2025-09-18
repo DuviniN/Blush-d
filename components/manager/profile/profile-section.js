@@ -112,8 +112,16 @@ class ProfileManager {
     }
 
     async loadManagerProfile() {
+        // Show loading indicator
+        this.showLoading();
+        
         try {
             const response = await fetch('../../../server/api.php?endpoint=profile&action=manager_profile');
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             const data = await response.json();
             
             if (data.success) {
@@ -124,7 +132,14 @@ class ProfileManager {
             }
         } catch (error) {
             console.error('Error loading profile:', error);
-            this.showNotification('Error loading profile data', 'error');
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                this.showNotification('Network error: Unable to connect to server', 'error');
+            } else {
+                this.showNotification('Error loading profile data', 'error');
+            }
+        } finally {
+            // Hide loading indicator
+            this.hideLoading();
         }
     }
 
@@ -185,12 +200,17 @@ class ProfileManager {
                 body: JSON.stringify(formData)
             });
             
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             const responseText = await response.text();
             
             let data;
             try {
                 data = JSON.parse(responseText);
             } catch (parseError) {
+                console.error('Response text:', responseText);
                 throw new Error('Invalid server response format');
             }
         
@@ -201,16 +221,19 @@ class ProfileManager {
             } else {
                 // Only show error if it's not just "no changes made"
                 if (data.message && !data.message.includes('No changes made')) {
-                    this.showNotification('Failed to update profile: ' + data.message, 'error');
+                    this.showNotification(data.message, 'error');
                     throw new Error(data.message);
                 } else {
-                    // If no changes were made, treat it as success
-                    this.showNotification('No changes were needed - profile is already up to date', 'info');
+                    this.showNotification('No changes were made to your profile.', 'info');
                 }
             }
         } catch (error) {
             console.error('Error saving profile:', error);
-            this.showNotification('Error saving profile: ' + error.message, 'error');
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                this.showNotification('Network error: Unable to save profile', 'error');
+            } else {
+                this.showNotification('Error saving profile: ' + error.message, 'error');
+            }
             throw error;
         }
     }
@@ -367,6 +390,15 @@ class ProfileManager {
                     if (fieldId === 'email' && fieldValue) {
                         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                         if (!emailRegex.test(fieldValue)) {
+                            isValid = false;
+                            field.style.borderColor = '#ef4444';
+                        }
+                    }
+                    
+                    // Phone validation (optional but if provided, should be valid)
+                    if (fieldId === 'phone' && fieldValue) {
+                        const phoneRegex = /^[\+]?[0-9\s\-\(\)]{10,}$/;
+                        if (!phoneRegex.test(fieldValue)) {
                             isValid = false;
                             field.style.borderColor = '#ef4444';
                         }
@@ -539,6 +571,20 @@ class ProfileManager {
         };
         return icons[type] || icons.info;
     }
+    
+    showLoading() {
+        const loadingOverlay = document.getElementById('profile-loading');
+        if (loadingOverlay) {
+            loadingOverlay.style.display = 'flex';
+        }
+    }
+    
+    hideLoading() {
+        const loadingOverlay = document.getElementById('profile-loading');
+        if (loadingOverlay) {
+            loadingOverlay.style.display = 'none';
+        }
+    }
 
     // Public methods
     setActiveTab(tabName) {
@@ -547,6 +593,27 @@ class ProfileManager {
 
     getCurrentTab() {
         return this.activeTab;
+    }
+    
+    refreshProfile() {
+        this.loadManagerProfile();
+    }
+    
+    isEditing() {
+        return this.editingSection !== null;
+    }
+    
+    getProfileData() {
+        return {
+            firstName: document.getElementById('firstName')?.value || '',
+            lastName: document.getElementById('lastName')?.value || '',
+            email: document.getElementById('email')?.value || '',
+            phone: document.getElementById('phone')?.value || '',
+            position: document.getElementById('position')?.value || '',
+            department: document.getElementById('department')?.value || '',
+            employeeId: document.getElementById('employeeId')?.value || '',
+            startDate: document.getElementById('startDate')?.value || ''
+        };
     }
 }
 

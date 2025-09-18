@@ -1,13 +1,16 @@
 <?php
-require_once __DIR__ . '/../includes/config.php';
-require_once __DIR__ . '/../includes/auth.php';
-require_login();
+if (!isset($_SESSION)) session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../../index.php");
+    exit();
+}
+require_once __DIR__ . '/../../../server/config/db.php';
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $title = $mysqli->real_escape_string($_POST['title']);
-    $body = $mysqli->real_escape_string($_POST['body']);
-    $stmt = $mysqli->prepare("INSERT INTO updates (title, body, created_at) VALUES (?, ?, NOW())");
+    $title = $conn->real_escape_string($_POST['title']);
+    $body = $conn->real_escape_string($_POST['body']);
+    $stmt = $conn->prepare("INSERT INTO updates (title, body, created_at) VALUES (?, ?, NOW())");
     $stmt->bind_param("ss", $title, $body);
     $stmt->execute();
     $stmt->close();
@@ -16,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Fetch updates
-$res = $mysqli->query("SELECT * FROM updates ORDER BY created_at DESC");
+$res = $conn->query("SELECT * FROM updates ORDER BY created_at DESC");
 $updates = $res ? $res->fetch_all(MYSQLI_ASSOC) : [];
 ?>
 <!doctype html>
@@ -24,7 +27,7 @@ $updates = $res ? $res->fetch_all(MYSQLI_ASSOC) : [];
 <head>
   <meta charset="utf-8">
   <title>Updates - Blush-D</title>
-  <link rel="stylesheet" href="/Blush-d/pages/admin/assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/style.css?v=<?php echo time(); ?>">
 </head>
 <body>
 <?php include __DIR__ . '/../includes/header.php'; ?>
@@ -68,6 +71,6 @@ $updates = $res ? $res->fetch_all(MYSQLI_ASSOC) : [];
     </div>
   </main>
 </div>
-<script src="/Blush-d/pages/admin/assets/js/main.js"></script>
+<script src="../assets/js/main.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

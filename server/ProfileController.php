@@ -1,7 +1,12 @@
 <?php
+session_start();
 require_once 'config/db.php';
-require_once 'temp_session.php';
 require_once 'BaseController.php';
+
+// Helper function to get current user ID from session
+function getCurrentUserId() {
+    return isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+}
 
 class ProfileController extends BaseController {
     
@@ -150,7 +155,9 @@ class ProfileController extends BaseController {
                 $this->sendResponse(false, 'Failed to update profile: ' . $this->conn->error, null, 500);
             }
         }
-    }    private function updateUser($data) {
+    }
+    
+    private function updateUser($data) {
         $required = ['user_id', 'first_name', 'last_name', 'email'];
         foreach ($required as $field) {
             if (!isset($data[$field])) {
@@ -164,7 +171,7 @@ class ProfileController extends BaseController {
         $phone = $data['phone_number'] ?? '';
         $role = $data['role'] ?? 'CUSTOMER';
         
-        $stmt->bind_param("ssssi", $data['first_name'], $data['last_name'], $data['email'], $phone, $role, $data['user_id']);
+        $stmt->bind_param("sssssi", $data['first_name'], $data['last_name'], $data['email'], $phone, $role, $data['user_id']);
         
         if ($stmt->execute()) {
             $this->sendResponse(true, 'User updated successfully');

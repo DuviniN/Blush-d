@@ -3,10 +3,48 @@
     display: none;
 }
 
+/* Profile Loading Overlay */
+.profile-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+}
+
+.profile-loading-content {
+    text-align: center;
+    color: #ec4899;
+}
+
+.profile-loading-content p {
+    margin: 15px 0 0 0;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.profile-loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #ec4899;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
 /* Profile Container */
 .profile-container {
     max-width: 100%;
     margin: 0;
+    position: relative;
 }
 
 /* Profile Hero Section */
@@ -650,4 +688,83 @@ input:checked + .profile-toggle-slider:before {
     .details-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* Notification Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+/* Profile Notification Styles */
+.profile-notification {
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+
+.notification-content i {
+    font-size: 16px;
+}
+
+/* Editable field styles */
+.profile-form-input.editable {
+    background: #ffffff !important;
+    border-color: #ec4899 !important;
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1) !important;
+}
+
+.profile-form-input.editable:focus {
+    border-color: #be185d !important;
+    box-shadow: 0 0 0 3px rgba(190, 24, 93, 0.15) !important;
+}
+
+/* Disabled toggle switches */
+.profile-toggle-switch.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.profile-toggle-switch.disabled input,
+.profile-toggle-switch.disabled .profile-toggle-slider {
+    cursor: not-allowed;
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.fa-spinner.fa-spin {
+    animation: spin 1s infinite linear;
 }

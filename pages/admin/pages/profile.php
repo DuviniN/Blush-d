@@ -1,26 +1,51 @@
 <?php
-require_once __DIR__ . '/../includes/config.php';
-require_once __DIR__ . '/../includes/auth.php';
-require_login();
+if (!isset($_SESSION)) session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../../index.php");
+    exit();
+}
+require_once __DIR__ . '/../../../server/config/db.php';
 
-// Session values (demo, not DB yet)
-$adminName  = $_SESSION['admin_name'] ?? "Admin";
-$adminEmail = $_SESSION['admin_email'] ?? "admin@blushd.com";
-$adminPhoto = $_SESSION['admin_photo'] ?? "uploads/default.png"; // fallback
+// Get admin data from session and database
+$user_id = $_SESSION['user_id'];
+$adminName = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? '');
+$adminEmail = $_SESSION['email'] ?? '';
+
+// Fetch additional profile data from database
+$stmt = $conn->prepare("SELECT first_name, last_name, email, phone_number FROM user WHERE user_id = ?");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$userData = $result->fetch_assoc();
+
+if ($userData) {
+    $adminName = trim($userData['first_name'] . ' ' . $userData['last_name']);
+    $adminEmail = $userData['email'];
+    $adminPhone = $userData['phone_number'] ?? '';
+}
+
+$adminPhoto = $_SESSION['admin_photo'] ?? "../upload/default.jpg";
 
 // Handle profile update
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $newName  = trim($_POST['name']);
+    $newName = trim($_POST['name']);
     $newEmail = trim($_POST['email']);
+    $newPhone = trim($_POST['phone'] ?? '');
+    
+    // Split name into first and last name
+    $nameParts = explode(' ', $newName, 2);
+    $firstName = $nameParts[0];
+    $lastName = isset($nameParts[1]) ? $nameParts[1] : '';
 
     // Handle photo upload
+    $photoUpdated = false;
     if (!empty($_FILES['photo']['name'])) {
-        $targetDir  = __DIR__ . "/uploads/";
+        $targetDir = __DIR__ . "/uploads/";
         if (!is_dir($targetDir)) {
             mkdir($targetDir, 0777, true);
         }
 
-        $filename   = time() . "_" . basename($_FILES["photo"]["name"]);
+        $filename = time() . "_" . basename($_FILES["photo"]["name"]);
         $targetFile = $targetDir . $filename;
 
         $ext = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
@@ -30,18 +55,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (move_uploaded_file($_FILES["photo"]["tmp_name"], $targetFile)) {
                 $_SESSION['admin_photo'] = "uploads/" . $filename;
                 $adminPhoto = $_SESSION['admin_photo'];
+                $photoUpdated = true;
             }
         }
     }
 
-    // Update session values
-    $_SESSION['admin_name']  = $newName;
-    $_SESSION['admin_email'] = $newEmail;
+    // Update database
+    $updateStmt = $conn->prepare("UPDATE user SET first_name = ?, last_name = ?, email = ?, phone_number = ? WHERE user_id = ?");
+    $updateStmt->bind_param("ssssi", $firstName, $lastName, $newEmail, $newPhone, $user_id);
+    
+    if ($updateStmt->execute()) {
+        // Update session variables
+        $_SESSION['first_name'] = $firstName;
+        $_SESSION['last_name'] = $lastName;
+        $_SESSION['email'] = $newEmail;
 
-    $adminName  = $newName;
-    $adminEmail = $newEmail;
+        $adminName = $newName;
+        $adminEmail = $newEmail;
+        $adminPhone = $newPhone;
 
-    $msg = "Profile updated successfully";
+        $msg = "Profile updated successfully";
+    } else {
+        $msg = "Error updating profile: " . $conn->error;
+    }
 }
 ?>
 <!doctype html>
@@ -49,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="utf-8">
   <title>Admin Profile - Blush-D</title>
-  <link rel="stylesheet" href="/Blush-d/pages/admin/assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/style.css?v=<?php echo time(); ?>">
   <style>
     .profile-photo {
       width:100px;
@@ -84,6 +120,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label>Email</label>
         <input type="email" name="email" value="<?= htmlspecialchars($adminEmail) ?>" required>
 
+        <label>Phone Number</label>
+        <input type="text" name="phone" value="<?= htmlspecialchars($adminPhone ?? '') ?>">
+
         <label>Profile Photo</label>
         <input type="file" name="photo" accept="image/*">
 
@@ -95,6 +134,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </main>
 </div>
-<script src="/Blush-d/pages/admin/assets/js/main.js"></script>
+<script src="../assets/js/main.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

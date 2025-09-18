@@ -72,6 +72,42 @@ body {
   gap: 15px;
 }
 
+/* Cart Link */
+.header-navbar .cart-link {
+  padding: 8px 16px;
+  background: #6ce770;
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.header-navbar .cart-link:hover {
+  background: #60de66;
+  transform: scale(1.05);
+}
+
+/* Cart Count Badge */
+.cart-count {
+  background: #ff1c68;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
+  min-width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5px;
+}
+
 .header-navbar .nav-user .username {
   font-size: 15px;
   font-weight: 500;
@@ -80,7 +116,7 @@ body {
 
 .header-navbar .logout-btn {
   padding: 6px 14px;
-  background: #f48fb1;
+  background: #ff1c68;
   color: #fff;
   text-decoration: none;
   font-size: 14px;

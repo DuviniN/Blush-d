@@ -5,6 +5,68 @@ document.addEventListener('DOMContentLoaded', function(){
     return confirm('Delete this product? This action cannot be undone.');
   }
 
+  // Logout functionality
+  const logoutBtn = document.getElementById('logoutBtn');
+  const sidebarLogoutBtn = document.getElementById('sidebarLogoutBtn');
+  const logoutModal = document.getElementById('logoutModal');
+  const cancelLogout = document.getElementById('cancelLogout');
+  const confirmLogout = document.getElementById('confirmLogout');
+
+  // Show logout modal when logout button is clicked (header)
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      logoutModal.style.display = 'flex';
+    });
+  }
+
+  // Show logout modal when logout button is clicked (sidebar)
+  if (sidebarLogoutBtn) {
+    sidebarLogoutBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      logoutModal.style.display = 'flex';
+    });
+  }
+
+  // Hide modal when cancel is clicked
+  if (cancelLogout) {
+    cancelLogout.addEventListener('click', () => {
+      logoutModal.style.display = 'none';
+    });
+  }
+
+  // Handle logout confirmation
+  if (confirmLogout) {
+    confirmLogout.addEventListener('click', () => {
+      // Call the API endpoint for logout
+      fetch('../../../server/api.php?endpoint=auth&action=logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'same-origin'
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Redirect to admin login page regardless of API response
+          window.location.href = '../../auth/login/login.php';
+        })
+        .catch(error => {
+          console.error('Logout error:', error);
+          // Still redirect to login page even if there's an error
+          window.location.href = '../../auth/login/login.php';
+        });
+    });
+  }
+
+  // Close modal when clicking outside of it
+  if (logoutModal) {
+    logoutModal.addEventListener('click', (e) => {
+      if (e.target === logoutModal) {
+        logoutModal.style.display = 'none';
+      }
+    });
+  }
+
   // theme toggle
   /*const themeToggleEls = document.querySelectorAll('#themeToggle');
   function applyTheme(isDark){

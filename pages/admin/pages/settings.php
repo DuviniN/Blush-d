@@ -1,7 +1,10 @@
 <?php
-require_once __DIR__ . '/../includes/config.php';
-require_once __DIR__ . '/../includes/auth.php';
-require_login();
+if (!isset($_SESSION)) session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../../index.php");
+    exit();
+}
+require_once __DIR__ . '/../../../server/config/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Example: change admin name (in demo we won't write to DB)
@@ -10,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <!doctype html><html><head><meta charset="utf-8"><title>Settings - Blush-D</title>
-<link rel="stylesheet" href="/Blush-d/pages/admin/assets/css/style.css"></head><body>
+<link rel="stylesheet" href="../assets/css/style.css?v=<?php echo time(); ?>"></head><body>
 <?php include __DIR__ . '/../includes/header.php'; ?>
 <div class="container">
   <?php include __DIR__ . '/../includes/sidebar.php'; ?>
@@ -30,5 +33,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </main>
 </div>
-<script src="/Blush-d/pages/admin/assets/js/main.js"></script>
+<script src="../assets/js/main.js?v=<?php echo time(); ?>"></script>
 </body></html>

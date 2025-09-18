@@ -1,5 +1,13 @@
 <!-- Profile Section Component -->
 <div id="profile-section" class="section" style="display: none;">
+    <!-- Profile Loading Indicator -->
+    <div id="profile-loading" class="profile-loading-overlay" style="display: none;">
+        <div class="profile-loading-content">
+            <div class="profile-loading-spinner"></div>
+            <p>Loading profile data...</p>
+        </div>
+    </div>
+    
     <div class="profile-container">
         <!-- Profile Hero Section -->
         <div class="profile-hero">

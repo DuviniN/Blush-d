@@ -1,14 +1,13 @@
 <?php
-// pages/admin/pages/edit_product.php
-require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/config.php';
+if (!isset($_SESSION)) session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../../index.php");
+    exit();
+}
+
+require_once __DIR__ . '/../../../server/config/db.php';
 
 $errors = [];
-
-
-
-
-
 
 // Validate GET id
 if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
@@ -17,9 +16,9 @@ if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
 $id = (int) $_GET['id'];
 
 // Fetch product
-$stmt = $mysqli->prepare("SELECT product_id, name, category_id, price, stock FROM product WHERE product_id = ?");
+$stmt = $conn->prepare("SELECT product_id, product_name, category_id, price, stock FROM product WHERE product_id = ?");
 if (!$stmt) {
-    die("Prepare failed: " . $mysqli->error);
+    die("Prepare failed: " . $conn->error);
 }
 $stmt->bind_param("i", $id);
 $stmt->execute();
@@ -34,7 +33,7 @@ $stmt->close();
 // Handle POST (update)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
-    $category = trim($_POST['category_id'] ?? '');
+    $category = (int)($_POST['category_id'] ?? '');
     $price = $_POST['price'] ?? '';
     $stock = $_POST['stock'] ?? '';
 
@@ -48,11 +47,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $price = (float)$price;
         $stock = (int)$stock;
 
-        $update = $mysqli->prepare("UPDATE product SET name = ?, category_id = ?, price = ?, stock = ? WHERE product_id = ?");
+        $update = $conn->prepare("UPDATE product SET product_name = ?, category_id = ?, price = ?, stock = ? WHERE product_id = ?");
         if (!$update) {
-            $errors[] = "Prepare failed: " . $mysqli->error;
+            $errors[] = "Prepare failed: " . $conn->error;
         } else {
-            $update->bind_param("ssdii", $name, $category, $price, $stock, $id);
+            $update->bind_param("sidii", $name, $category, $price, $stock, $id);
             if ($update->execute()) {
                 header("Location: manage_products.php?msg=" . urlencode("Product updated successfully"));
                 exit();
@@ -70,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Edit Product</title>
-    <link rel="stylesheet" href="../assets/css/edit_product.css"> <!-- Your CSS -->
+    <link rel="stylesheet" href="../assets/css/edit_product.css?v=<?php echo time(); ?>"> <!-- Your CSS -->
 </head>
 <body>
     <h2>Edit Product</h2>
@@ -83,9 +82,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     <?php endif; ?>
 
-    <form method="POST" action="edit_product.php?id=<?php echo $id; ?>">
+    <form method="POST" action="product.php?id=<?php echo $id; ?>">
         <label>Product Name:</label>
-        <input type="text" name="name" value="<?php echo htmlspecialchars($product['name']); ?>" required>
+        <input type="text" name="name" value="<?php echo htmlspecialchars($product['product_name']); ?>" required>
 
         <label>Category ID:</label>
         <input type="text" name="category_id" value="<?php echo htmlspecialchars($product['category_id']); ?>" required>
@@ -101,5 +100,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="product.php" class="btn-cancel">Cancel</a>
         </div>
     </form>
+    <script src="../assets/js/edit_product.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

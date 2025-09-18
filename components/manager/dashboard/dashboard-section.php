@@ -1,3 +1,4 @@
+
 <!-- Dashboard Section Component -->
 <div id="dashboard-section" class="section">
     <header class="header">
