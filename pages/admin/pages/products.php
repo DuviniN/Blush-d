@@ -32,7 +32,7 @@ $products = $conn->query("SELECT p.*, c.name AS category_name FROM product p LEF
         <?php while($p = $products->fetch_assoc()): ?>
         <tr>
           <td><?=$p['product_id']?></td>
-          <td><?=htmlspecialchars($p['product_id'])?></td>
+          <td><?=htmlspecialchars($p['product_name'])?></td>
           <td><?=htmlspecialchars($p['category_name'])?></td>
           <td>$<?=number_format($p['price'],2)?></td>
           <td><?=$p['stock']?></td>

@@ -31,7 +31,7 @@ if (isset($_GET['delete'])) {
 }
 
 // Fetch all products for dropdown
-$products = $conn->query("SELECT product_id, name FROM product ORDER BY name");
+$products = $conn->query("SELECT product_id, product_name FROM product ORDER BY product_name");
 
 // Fetch current discounts
 $discounts = $conn->query("SELECT d.*, p.name AS product_name
