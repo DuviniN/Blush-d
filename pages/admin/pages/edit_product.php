@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $update->bind_param("sidii", $name, $category, $price, $stock, $id);
             if ($update->execute()) {
-                header("Location: manage_products.php?msg=" . urlencode("Product updated successfully"));
+                header("Location: ./dashboard.php?msg=" . urlencode("Product updated successfully"));
                 exit();
             } else {
                 $errors[] = "Update failed: " . $update->error;
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="buttons">
             <button type="submit">Update</button>
-            <a href="product.php" class="btn-cancel">Cancel</a>
+            <a href="./dashboard.php" class="btn-cancel">Cancel</a>
         </div>
     </form>
     <script src="../assets/js/edit_product.js?v=<?php echo time(); ?>"></script>

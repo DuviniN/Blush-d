@@ -20,9 +20,7 @@
                 </div>
             </div>
             <div class="stats-number">0</div>
-            <div class="stats-trend">
-                <i class="fas fa-arrow-up"></i> +2 this month
-            </div>
+            
         </div>
 
         <div class="card">
@@ -52,9 +50,7 @@
                 </div>
             </div>
             <div class="stats-number">4</div>
-            <div class="stats-trend">
-                <i class="fas fa-arrow-up"></i> +25% from last month
-            </div>
+            
         </div>
 
         <div class="card">
@@ -68,9 +64,7 @@
                 </div>
             </div>
             <div class="stats-number">Rs.197</div>
-            <div class="stats-trend">
-                <i class="fas fa-arrow-up"></i> +15% from last month
-            </div>
+            
         </div>
     </div>
 
