@@ -20,9 +20,10 @@ CREATE TABLE `user` (
 );
 INSERT INTO `user` (`user_id`, `first_name`, `last_name`, `email`, `password`, `address`, `phone_number`, `role`, `department`, `birth_day`, `start_day`) VALUES
 (1, 'Jessica', 'Anderson', 'admin@example.com', '$2y$10$OELhuUiwHcVxo./6Coo13OaVgcu5NxleVe9EzKV2nZhYgc92wNaw6', '123 Hollywood Blvd, Los Angeles, CA', '555-0101', 'ADMIN', NULL, NULL, '2017-04-15'),
-(2, 'Olivia', 'Johnson', 'manager@example.com', '$2y$10$Sz/Di9gZNsBrWxEhn7tzluWtun899awqghs2q8o3qas5kgwGJlS0m', '456 Park Avenue, New York, NY', '555-0102', 'MANAGER', NULL, NULL, '2018-07-22'),
-(3, 'Thiseni', 'Ruhansa', 'thiseni@gmail.com', '$2y$10$Cza94X.nKAZ6l8o/frHyOeAHoXn2lTb6HRM7iqt7JSKK2GwyQKGvS', NULL, NULL, 'CUSTOMER', NULL, NULL, NULL);
+(2, 'Olivia', 'Johnson', 'manager@example.com', '$2y$10$Sz/Di9gZNsBrWxEhn7tzluWtun899awqghs2q8o3qas5kgwGJlS0m', '456 Park Avenue, New York, NY', '555-0102', 'MANAGER', NULL, NULL, '2018-07-22');
 
+-- ADMIN password = Admin@1234
+-- MANAGER password = Manager@1234
 
 DROP TABLE IF EXISTS `category`;
 CREATE TABLE `category` (

@@ -1,101 +1,79 @@
 # Blush-d
 
-Blush'd is a responsive cosmetic e-commerce website built with HTML, CSS, PHP, and MySQL. Customers can browse beauty products, view details, add items to cart, and place orders. The admin panel manages products, inventory, and orders, ensuring a smooth, user-friendly shopping experience with dynamic content and CRUD functionality.
+Blush-d is a cosmetic e‑commerce website built with PHP and MySQL. It supports three roles with clear permissions and a simple flow for browsing, purchasing, and managing products.
 
-## Features
+## Roles and Permissions
 
-### Customer Features
-- **Product Browsing**: Browse and search through BLUSH-D cosmetic products
-- **Product Details**: View detailed product information with images and descriptions
-- **Shopping Cart**: Add products to cart and manage quantities
-- **User Reviews**: View customer reviews and ratings for products
-- **Responsive Design**: Mobile-friendly interface with modern pink theme
-- **User Authentication**: Secure login and registration system
+- Manager
+  - Add new products
+  - Add stock to existing products
+  - View sales/ordering details
 
-### Admin/Manager Features
-- **Product Management**: Add, edit, and delete products with category management
-- **Inventory Control**: Track and manage product stock levels
-- **Order Management**: View and process customer orders
-- **Reports**: Generate sales and inventory reports
-- **User Management**: Manage customer accounts and access levels
+- Admin
+  - Edit and delete products and product details
+  - Create and manage Manager accounts
+  - View product details, customer list, and customer reviews
 
-## Technology Stack
+- Customer
+  - Register and log in
+  - Browse and buy cosmetic products easily
+  - Submit product reviews
 
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Backend**: PHP 8.2
-- **Database**: MySQL
-- **Design**: Responsive design with pink theme (#d81b60, #f48fb1)
-- **Icons**: Font Awesome for professional iconography
+Notes
+- The site has a landing page as the first page visitors see.
+- Customers must register to buy; otherwise they can log in if they already have an account.
+- There is already one Admin account in the system. Only Admin can create Manager accounts.
+- Admin and Manager cannot self‑register. They receive credentials separately.
 
-## Project Structure
+Default Credentials (for local testing)
+- ADMIN: email `admin@gmail.com`, password `Admin@1234`
+- MANAGER: email `manager@gmail.com`, password `Manager@1234`
+
+## Project Structure (high level)
 
 ```
 Blush-d/
-├── assets/                 # Static assets (CSS, JS, Images)
-├── components/            # Reusable components
-│   ├── footer/           # Footer component
-│   ├── navigation/       # Navigation component
-│   └── manager/          # Manager dashboard components
-├── pages/                # Application pages
-│   ├── admin/           # Admin dashboard
-│   ├── customer/        # Customer pages
-│   ├── manager/         # Manager dashboard
-│   ├── login/           # Authentication pages
-│   └── register/
-├── server/               # Backend API controllers
-└── database files       # SQL initialization files
+├── pages/               # UI pages (admin, manager, customer, auth)
+├── components/          # Reusable UI components
+├── server/              # PHP controllers and config
+├── assets/              # CSS/JS/Images
+└── Dumps/               # SQL dump(s) for database setup
 ```
 
-## Installation
+## Database Setup (MySQL)
 
-1. **Prerequisites**
-   - XAMPP or similar local server environment
-   - PHP 8.2 or higher
-   - MySQL database
+1. Start MySQL (via XAMPP Control Panel).
+2. Open phpMyAdmin at http://localhost/phpmyadmin.
+3. Create a new database (for example `blush_d`).
+4. Import the SQL dump:
+   - Go to the Import tab.
+   - Choose the dump file located at `Dumps/init.sql` (or the latest dump you have in `Dumps/`).
+   - Click Import.
+5. Verify tables and initial records (including the default Admin/Manager where applicable).
 
-2. **Setup**
-   ```bash
-   # Clone the repository
-   git clone <repository-url>
-   
-   # Move to XAMPP htdocs
-   cp -r Blush-d c:\xampp\htdocs\
-   ```
+Database config file
+- Update connection settings in `server/config/db.php` to match your local MySQL setup (host, username, password, and database name you created).
 
-3. **Database Setup**
-   - Import `init.sql` to create the database structure
-   - Import `database_password_tables.sql` for initial data
+## Run with XAMPP
 
-4. **Configuration**
-   - Update database connection settings in `server/config/db.php`
-   - Start XAMPP services (Apache, MySQL)
+1. Copy or place this project under your XAMPP htdocs folder, for example:
+   - `c:\xampp\htdocs\Blush-d`
+2. Start Apache and MySQL from the XAMPP Control Panel.
+3. Ensure `server/config/db.php` points to your database.
+4. Visit the site in your browser:
+   - http://localhost/Blush-d
 
-5. **Access**
-   - Open `http://localhost/Blush-d` in your browser
+Login/Registration
+- Customers register via the registration page.
+- Admin and Manager accounts are not created via registration. Use the provided credentials or have Admin create Manager accounts from the Admin interface.
 
-## API Endpoints
+## Tech Stack
 
-- **Products**: `GET/POST/PUT/DELETE /server/api.php?endpoint=products`
-- **Categories**: `GET/POST/PUT/DELETE /server/api.php?endpoint=categories`
-- **Reviews**: `GET /server/api.php?endpoint=reviews`
-- **Reports**: `GET /server/api.php?endpoint=reports`
+- PHP 8.x, MySQL
+- HTML, CSS, JavaScript
 
-## Color Theme
+## Notes for Developers
 
-The website uses a modern pink color scheme:
-- Primary: `#d81b60`
-- Secondary: `#f48fb1`
-- Accent colors: `#ec407a`, `#d63384`
-- Text: `#000000`, `#222222`, `#ffffff`
+- Keep SQL dumps in `Dumps/` and update the README with any schema changes.
+- Do not expose real production credentials; the defaults above are for local testing only.
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## License
-
-This project is developed for educational and commercial purposes.Blush-d
